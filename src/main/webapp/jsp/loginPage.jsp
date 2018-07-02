@@ -14,7 +14,7 @@
           <input type="checkbox" value="remember-me" style="margin-top:30px auto;"> Remember me
         </label>
       </div>
-      <button class="btn btn-danger" type="submit">Sign in</button>
+      <button class="btn btn-danger" type="submit">Log in</button>
       <p class="mt-5 mb-3 text-muted" style="margin-top:30px auto;">&copy; 2017-2018</p>
        <a href="/">Go Back</a>
     </form>

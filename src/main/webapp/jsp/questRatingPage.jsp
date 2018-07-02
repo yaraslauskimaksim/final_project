@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file = "part/head.jsp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
 <div class="album py-5 bg-light">
 <div class="container">
 <div class="row">
@@ -35,33 +34,35 @@
       </div>
 </c:forEach>
 </div>
+
+
 <ul class="pagination justify-content-center">
-     <c:if test="${currentPage != 1}">
-        <li class="page-item">
-           <a class="page-link" href="frontController?command=quest&page=${currentPage - 1}" aria-label="Previous">
-           <span aria-hidden="true">&laquo;</span>
-           <span class="sr-only">Previous</span>
-           </a>
-        </li>
-     </c:if>
-     <li class="page-item">
-        <c:forEach begin="1" end="${noOfPages}" var="i">
-           <c:choose>
-              <c:when test="${currentPage eq i}">
-                 <a class="page-link" href="frontController?command=quest&page=${i}" > ${i}</a>
-              </c:when>
-           </c:choose>
-        </c:forEach>
-     </li>
-     <li class="page-item">
-        <c:if test="${currentPage lt noOfPages}">
-           <a class="page-link" href="frontController?command=quest&page=${currentPage + 1}" aria-label="Next">
-           <span aria-hidden="true">&raquo;</span>
-           <span class="sr-only">Next</span>
-           </a>
-        </c:if>
-     </li>
-  </ul>
-  </div>
-  </div>
-  <%@ include file = "part/footer.jsp" %>
+   <c:if test="${currentPage != 1}">
+      <li class="page-item">
+         <a class="page-link" href="frontController?command=showQuestByRating&page=${currentPage - 1}" aria-label="Previous">
+         <span aria-hidden="true">&laquo;</span>
+         <span class="sr-only">Previous</span>
+         </a>
+      </li>
+   </c:if>
+   <li class="page-item">
+      <c:forEach begin="1" end="${noOfPages}" var="i">
+         <c:choose>
+            <c:when test="${currentPage eq i}">
+               <a class="page-link" href="frontController?command=showQuestByRating&page=${i}" > ${i}</a>
+            </c:when>
+         </c:choose>
+      </c:forEach>
+   </li>
+   <li class="page-item">
+      <c:if test="${currentPage lt noOfPages}">
+         <a class="page-link" href="frontController?command=showQuestByRating&page=${currentPage + 1}" aria-label="Next">
+         <span aria-hidden="true">&raquo;</span>
+         <span class="sr-only">Next</span>
+         </a>
+      </c:if>
+   </li>
+</ul>
+</div>
+</div>
+<%@ include file = "part/footer.jsp" %>

@@ -12,7 +12,7 @@
 
     <filter>
         <filter-name>LoginFilter</filter-name>
-        <filter-class>final_project.controller.filter.LoginFilter</filter-class>
+        <filter-class>by.corporation.final_project.controller.filter.LoginFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
@@ -21,11 +21,20 @@
 
     <filter>
         <filter-name>AdminFilter</filter-name>
-        <filter-class>final_project.controller.filter.AdminFilter</filter-class>
+        <filter-class>by.corporation.final_project.controller.filter.AdminFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/administrator/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>QuestOwnerFilter</filter-name>
+        <filter-class>by.corporation.final_project.controller.filter.QuestOwnerFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>QuestOwnerFilter</filter-name>
+        <url-pattern>/quest_owner/*</url-pattern>
     </filter-mapping>
 
 
@@ -33,20 +42,12 @@
 
     <servlet>
         <servlet-name>FrontController </servlet-name>
-        <servlet-class>final_project.controller.FrontController</servlet-class>
+        <servlet-class>by.corporation.final_project.controller.FrontController</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/frontController</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>LoginPage</servlet-name>
-        <jsp-file>/jsp/loginPage.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LoginPage</servlet-name>
-        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>HomePage</servlet-name>
@@ -77,12 +78,48 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>CommentForm</servlet-name>
-        <jsp-file>/jsp/user/commentForm.jsp</jsp-file>
+        <servlet-name>QuestByRatingPage</servlet-name>
+        <jsp-file>/jsp/questRatingPage.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>CommentForm</servlet-name>
-        <url-pattern>/commentForm</url-pattern>
+        <servlet-name>QuestByRatingPage</servlet-name>
+        <url-pattern>/questRatingPage</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>QuestOwner</servlet-name>
+        <jsp-file>/jsp/quest_owner/questOwner.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>QuestOwner</servlet-name>
+        <url-pattern>/questOwner</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>OwnerByQuestRoomName</servlet-name>
+        <jsp-file>/jsp/quest_owner/quest.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OwnerByQuestRoomName</servlet-name>
+        <url-pattern>/allQuests</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SingleQuestOwner</servlet-name>
+        <jsp-file>/jsp/quest_owner/singleQuest.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SingleQuestOwner</servlet-name>
+        <url-pattern>/singleQuest</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>ErrorPage</servlet-name>
+        <jsp-file>/jsp/error/error.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ErrorPage</servlet-name>
+        <url-pattern>/error</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -1,6 +1,6 @@
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file = "part/header.jsp" %>
+<%@ include file = "part/head.jsp" %>
   <body class="text-center">
     <form class="form-signin" action="frontController" method="POST" style="width:30%; margin:30px auto;">
     <input type="hidden" name="command" value="register"/>
@@ -23,5 +23,4 @@
       <p class="mt-5 mb-3 text-muted" style="margin-top:30px auto;">&copy; 2017-2018</p>
        <a href="/">Go Back</a>
     </form>
-  </body>
-</html>
+<%@ include file = "part/footer.jsp" %>
