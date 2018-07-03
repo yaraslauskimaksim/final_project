@@ -20,9 +20,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserServiceImpl() {
-    }
-
-    ;
+    };
 
     private static UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
