@@ -9,7 +9,9 @@
     </welcome-file-list>
 
 
-
+    <listener>
+        <listener-class>by.corporation.final_project.controller.ContextListener</listener-class>
+    </listener>
     <filter>
         <filter-name>LoginFilter</filter-name>
         <filter-class>by.corporation.final_project.controller.filter.LoginFilter</filter-class>

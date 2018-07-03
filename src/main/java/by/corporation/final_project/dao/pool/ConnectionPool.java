@@ -33,21 +33,19 @@ public final class ConnectionPool {
         return connectionQueue;
     }
 
-    private ConnectionPool() {
-        initPoolSize();
-        Connection connection = null;
-        connectionQueue = new ArrayBlockingQueue<>(poolSize);
-        for (int i = 0; i < poolSize; i++) {
-            try {
-                connection = DriverManager.getConnection(BundleResourceManager.getDatabasegProperty("db.url"), BundleResourceManager.getDatabasegProperty("db.user"), BundleResourceManager.getDatabasegProperty("db.password"));
-                PooledConnection pooledConnection = new PooledConnection(connection);
-                connectionQueue.add(pooledConnection);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error during instantiation of the connection pool");
-            }
-        }
-    }
 
+   public void initializeConnectionPool() throws ConnectionPoolException {
+        initPoolSize();
+       try {
+           connectionQueue = new ArrayBlockingQueue<>(poolSize);
+           for (int i = 0; i < poolSize; i++) {
+               Connection connection = DriverManager.getConnection(BundleResourceManager.getDatabasegProperty("db.url"), BundleResourceManager.getDatabasegProperty("db.user"), BundleResourceManager.getDatabasegProperty("db.password"));
+               connectionQueue.add(new PooledConnection(connection));
+           }
+       } catch (SQLException e) {
+           throw new ConnectionPoolException("Error during instantiation of the connection pool", e);
+       }
+   }
 
    private void initPoolSize() {
         try {
@@ -67,7 +65,7 @@ public final class ConnectionPool {
         return connection;
     }
 
-    private void closeConnectionQueue(BlockingQueue<Connection> queue) throws ConnectionPoolException {
+    public void closeConnectionQueue() throws ConnectionPoolException {
         for (int i = 0; i < poolSize; i++) {
             try {
                 Connection connection = connectionQueue.take();

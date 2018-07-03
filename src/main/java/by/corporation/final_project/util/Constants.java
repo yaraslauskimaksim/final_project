@@ -30,6 +30,7 @@ public class Constants {
     public static final String PATH_SHOW_ALL_QUESTS_BY_ROOM_NAME = "path.page.questByRoomNames";
     public static final String PATH_HOME = "path.page.home";
     public static final String PATH_QUEST_BY_RATING= "path.page.questByRating";
+    public static final String PATH_REGISTER = "path.page.register";
 
 
     /**

@@ -22,54 +22,55 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
       <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-      <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
-   </head>
-   <body>
-    <header>
-       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-          <c:choose>
-             <c:when test="${'QUEST_OWNER' == sessionScope.role}">
-                <a class="navbar-brand" href="/questOwner">QuestFire</a>
-             </c:when>
-             <c:otherwise>
-                <a class="navbar-brand" href="/home">QuestFire</a>
-             </c:otherwise>
-          </c:choose>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav mr-auto">
-             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-             </li>
-             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Quests</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-                   <a class="dropdown-item" href="frontController?command=quest&page=1">All Quests</a>
-                   <a class="dropdown-item" href="frontController?command=showQuestByRating&page=1">Top Quest</a>
-                </div>
-             </li>
-             <c:choose>
-                <c:when test="${empty user.email}">
-                   <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign In / Sigh Up</a>
-                      <div class="dropdown-menu" aria-labelledby="dropdown01">
-                         <a class="dropdown-item" data-toggle="modal" data-target="#loginModal">Sign In</a>
-                         <a class="dropdown-item" href="/register">Sign Up</a>
-                         </di>
-                   </li>
-                </c:when>
-                <c:when test="${not empty user.email}">
-                <li class="nav-item">
-                <a class="nav-link" href="#"><c:out value="${user.email}"/></a>
-                </li>
-                <li class="nav-item">
-                <a class="btn btn-outline-danger" href="${_contextPath}/frontController?command=logout">Logout</a>
-                </li>
-                </c:when>
-             </c:choose>
-          </ul>
+
+     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+     </head>
+     <body>
+        <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <c:choose>
+           <c:when test="${'QUEST_OWNER' == sessionScope.role}">
+              <a class="navbar-brand" href="/questOwner">QuestFire</a>
+           </c:when>
+           <c:otherwise>
+              <a class="navbar-brand" href="/home">QuestFire</a>
+           </c:otherwise>
+        </c:choose>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+           <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+           </li>
+           <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Quests</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown01">
+                 <a class="dropdown-item" href="frontController?command=quest&page=1">All Quests</a>
+                 <a class="dropdown-item" href="frontController?command=showQuestByRating&page=1">Top Quest</a>
+              </div>
+           </li>
+           <c:choose>
+              <c:when test="${empty user.email}">
+                 <li class="nav-item active">
+                    <a class="nav-link" data-toggle="modal" data-target="#loginModal">Sign In</a>
+                 </li>
+              </c:when>
+              <c:when test="${not empty user.email}">
+                 <li class="nav-item">
+                    <a class="nav-link" href="#">
+                       <c:out value="${user.email}"/>
+                    </a>
+                 </li>
+                 <li class="nav-item">
+                    <a class="btn btn-outline-danger" href="${_contextPath}/frontController?command=logout">Logout</a>
+                 </li>
+              </c:when>
+           </c:choose>
+        </ul>
           <form class="form-inline mt-2 mt-md-0"  style="padding-right: 1rem; ">
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <button class="btn btn-danger my-2 my-sm-0" type="submit">Search</button>

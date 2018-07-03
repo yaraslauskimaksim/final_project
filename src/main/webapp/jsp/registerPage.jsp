@@ -6,7 +6,8 @@
     <input type="hidden" name="command" value="register"/>
       <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please Sign Up!</h1>
-      <label for="inputEmail" class="sr-only">Your First name, please!</label>
+       <h1 class="h3 mb-3 font-weight-normal">${error}</h1>
+       <label for="inputEmail" class="sr-only">Your First name, please!</label>
       <input type="text" name="firstname" class="form-control" placeholder="First Name" required autofocus>
        <label for="inputEmail" class="sr-only">Your Last name, please!</label>
        <input type="text" name="lastname" class="form-control" placeholder="Last Name" required autofocus>

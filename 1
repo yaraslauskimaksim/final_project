@@ -1,0 +1,46 @@
+ <form class="form-inline mt-2 mt-md-2">
+              <a class="btn btn-danger" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Come Closer!</a>
+            </form>
+            <div class="row">
+              <div class="col">
+               <div class="collapse multi-collapse" id="multiCollapseExample1">
+               <div class="card card-body">
+               <c:choose>
+                <c:when test="${empty user.email}">
+                <a  type="button" class="btn btn-outline-danger" href="/login">${login}</a>
+                <a  type="button" class="btn btn-outline-danger" href="/register">${signup}</a>
+                </c:when>
+                 <c:when test="${not empty user.email}">
+                 <c:out value="${user.email}"/>
+                  <a class="btn btn-outline-danger" href="frontController?command=logout">Logout</a>
+                  </c:when>
+                </c:choose>
+                </ul>
+                </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container marketing">
+           <div class="row" >
+                    <c:forEach items="${quest}" var="quest">
+            <div class="col-lg-4" style="width: 20rem; ">
+              <c:if test="${not empty quest.image}">
+             <img class="rounded-circle" src="${quest.image}" alt="" width="200" height="200">
+              </c:if>
+              <h2>
+            <span><c:out value="${quest.name}" /></span>
+                                 <span><c:out value="${quest.genre}" /></span>
+                                 </h2>
+                                  <p><c:out value="${quest.description}" /></p>
+                                  <span><a class="btn btn-danger" href="frontController?command=singleQuest&questId=${quest.questId}">View</a></span>
+                               </div>
+             </c:forEach>
+             </div>
+             </div>
+
+   </main>
+   </hr>
