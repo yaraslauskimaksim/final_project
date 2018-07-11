@@ -18,5 +18,7 @@ public interface QuestDAO {
     String getQuestRoomName(int userId) throws DaoException;
     int getQuestQuantity() throws ConnectionPoolException;
     int getQuestQuantityByQuestRoom(String questRoomName) throws DaoException;
+    int getQuestQuantityByQuestName(String questName) throws DaoException;
     List<Quest> getAllQuestByRating(int questPerPage, int currentPage) throws  DaoException;
+    List<Quest> searchQuests(String  name, int questPerPage, int currentPage) throws ConnectionPoolException;
 }

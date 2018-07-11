@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file = "part/head.jsp" %>
+<%@ include file = "part/header.jsp" %>
   <main role="main">
 
       <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -15,7 +15,7 @@
               <div class="carousel-caption text-left">
                 <h1>Example headline.</h1>
                 <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today${success}</a></p>
               </div>
             </div>
           </div>

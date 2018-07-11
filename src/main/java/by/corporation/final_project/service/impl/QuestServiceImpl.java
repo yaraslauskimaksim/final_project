@@ -30,10 +30,26 @@ public class QuestServiceImpl implements QuestService {
         List<Quest> quests = null;
         try {
             if(currentPage >= 0){
-                quests = questDAO.getAllQuests(Constants.QUESTS_PER_PAGE_DEFAULT_VALUE, currentPage);
+                quests = questDAO.getAllQuests(Constants.ITEMS_PER_PAGE, currentPage);
             }
             if (quests.isEmpty()) {
                     return null;
+            }
+        } catch (ConnectionPoolException e) {
+            throw new ServiceException("Exception occurs during validation of quests", e);
+        }
+        return quests;
+    }
+
+    @Override
+    public List<Quest> searchQuests(String name, int currentPage) throws ServiceException {
+        List<Quest> quests = null;
+        try {
+            if(currentPage >= 0){
+                quests = questDAO.searchQuests(name, Constants.ITEMS_PER_PAGE, currentPage);
+            }
+            if (quests.isEmpty()) {
+                return null;
             }
         } catch (ConnectionPoolException e) {
             throw new ServiceException("Exception occurs during validation of quests", e);
@@ -115,7 +131,7 @@ public class QuestServiceImpl implements QuestService {
         List<Quest>  quests = null;
         try {
             if(currentPage >= 0){
-                quests = questDAO.getAllQuestByQuestRoomName(questRoomName, Constants.QUESTS_PER_PAGE_DEFAULT_VALUE, currentPage);
+                quests = questDAO.getAllQuestByQuestRoomName(questRoomName, Constants.ITEMS_PER_PAGE, currentPage);
             }
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during " , e);
@@ -130,7 +146,7 @@ public class QuestServiceImpl implements QuestService {
         List<Quest>  quests = null;
         try {
             if(currentPage >= 0){
-                quests = questDAO.getAllQuestByRating(Constants.QUESTS_PER_PAGE_DEFAULT_VALUE, currentPage);
+                quests = questDAO.getAllQuestByRating(Constants.ITEMS_PER_PAGE, currentPage);
             }
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during " , e);
@@ -172,6 +188,16 @@ public class QuestServiceImpl implements QuestService {
         return counter;
     }
 
+    @Override
+    public int getQuestQuantityByQuestName(String questName) {
+        int counter = 0;
+        try {
+            counter = questDAO.getQuestQuantityByQuestName(questName);
+        }  catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return counter;
+    }
 
 }
 

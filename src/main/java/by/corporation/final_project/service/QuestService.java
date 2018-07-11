@@ -19,5 +19,7 @@ public interface QuestService {
     String getQuestRoomName(int userId);
     int getQuestQuantity();
     int getQuestQuantityByQuestRoom(String questRoomName);
+    int getQuestQuantityByQuestName(String questName);
     List<Quest> showAllQuestsByRating(int currentPage) throws ServiceException;
+    List<Quest> searchQuests(String name, int currentPage) throws ServiceException;
 }

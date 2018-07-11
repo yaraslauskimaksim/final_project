@@ -17,6 +17,13 @@ public class LocaleCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         session.setAttribute(SESSION_SCOPE, request.getParameter(SESSION_SCOPE));
-        request.getRequestDispatcher(request.getParameter(ADDRESS)).forward(request, response);
+        String viewPath = getRefererPage(request);
+        response.sendRedirect(viewPath);
+      //  request.getRequestDispatcher(request.getParameter(ADDRESS)).forward(request, response);
+    }
+
+    public static String getRefererPage(HttpServletRequest request) {
+        String refererPage = request.getHeader("referer");
+        return refererPage;
     }
 }

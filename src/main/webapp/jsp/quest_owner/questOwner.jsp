@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file = "../part/head.jsp" %>
+<%@ include file = "../part/header.jsp" %>
 <hr>
 <div class="row" >
 <div class="col-xl-3 col-sm-6 mb-3"  style="padding-left: 2rem; ">
@@ -42,7 +42,7 @@
          </div>
          <div class="mr-5">New Booking!</div>
       </div>
-      <a class="card-footer text-white clearfix small z-1" href="#">
+     <a class="card-footer text-white clearfix small z-1" href="${_contextPath}/frontController?command=showUserBooking&page=1">
       <span class="float-left">View Details</span>
       <span class="float-right">
       <i class="fa fa-angle-right"></i>

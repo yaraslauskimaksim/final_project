@@ -7,6 +7,8 @@ import by.corporation.final_project.service.exception.ServiceException;
 import by.corporation.final_project.service.impl.UserServiceImpl;
 import by.corporation.final_project.util.BundleResourceManager;
 import by.corporation.final_project.util.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,37 +16,41 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+
 public class LoginCommand implements Command {
+    private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class);
+    StringBuilder path = new StringBuilder();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        User user = formUser(email, password);
         try {
-            user = UserServiceImpl.getUserService().getUser(email, password);
+            User user = UserServiceImpl.getUserService().getUser(email, password);
+            if (user!=null){
+                request.setAttribute("success", "success");
+                request.getSession().setAttribute("userId", user.getId());
+                request.getSession().setAttribute("user", user);
+                request.getSession().setAttribute("role", user.getRole());
+                path.append(identifyRole(user.getRole(), request));
+            }else {
+                request.setAttribute("errorInLogin", Constants.INVALID_LOGIN_MESSAGE);
+                path.append(request.getContextPath()).append(BundleResourceManager.getConfigProperty(Constants.PATH_LOGIN));
+            }
         } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        if (user!=null){
-            request.getSession().setAttribute("userId", user.getId());
-            request.getSession().setAttribute("user", user);
-            request.getSession().setAttribute("role", user.getRole());
-            response.sendRedirect(identifyRole(user.getRole(), request));
-        }
-        else {
-            request.setAttribute("error", "Unknown login, try again"); // Set error msg for ${error}
-            response.sendRedirect(BundleResourceManager.getConfigProperty(Constants.PATH_HOME));
+            LOGGER.error("ServiceException");
         }
 
+        response.sendRedirect(path.toString());
+        path.setLength(0);
     }
 
-    public String identifyRole(Role role, HttpServletRequest request) {
+    private String identifyRole(Role role, HttpServletRequest request) {
         String path = null;
         switch (role){
             case CLIENT:
-                path = request.getContextPath() + "/index.jsp";
+                path = request.getContextPath() + BundleResourceManager.getConfigProperty(Constants.PATH_HOME);
                 return path;
             case QUEST_OWNER:
                 path = request.getContextPath() + BundleResourceManager.getConfigProperty(Constants.PATH_OWNER);
@@ -57,12 +63,7 @@ public class LoginCommand implements Command {
     }
 
 
-    private User formUser(String email, String password){
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
-        return user;
-    }
+
 }
 
 

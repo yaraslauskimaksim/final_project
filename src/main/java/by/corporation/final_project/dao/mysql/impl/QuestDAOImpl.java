@@ -33,12 +33,31 @@ public class QuestDAOImpl implements QuestDAO {
     private static final String GET_ALL_QUEST_QUANTITY = "SELECT COUNT(*) FROM quest";
     private static final String GET_ALL_QUEST_QUANTITY_BY_ROOM_NAME = "SELECT COUNT(*) FROM quest where que_room_name=?";
     private static final String GET_ALL_QUESTS_BY_RATING = "SELECT que_id, que_genre, que_name, que_description, que_image, que_room_name, que_user_id FROM quest ORDER BY que_score DESC LIMIT ? OFFSET ?";
+    private static final String SEARCH_QUEST = "SELECT que_id, que_genre, que_name, que_description, que_image, que_room_name, que_user_id FROM quest WHERE que_name LIKE ? LIMIT ? OFFSET ?";
+    private static final String GET_ALL_QUEST_QUANTITY_BY_QUEST_NAME = "SELECT COUNT(*) FROM quest where que_name=?";
 
     @Override
     public int getQuestQuantityByQuestRoom(String questRoomName) throws  DaoException {
         int counter = 0;
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_QUEST_QUANTITY_BY_ROOM_NAME);) {
             preparedStatement.setString(1, questRoomName);
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                while (resultSet.next()) {
+                    counter =  resultSet.getInt(1);
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Exception occurs during retrieving data about one single quest", e);
+        }
+        return counter;
+    }
+
+    @Override
+    public int getQuestQuantityByQuestName(String questName) throws DaoException {
+        int counter = 0;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_QUEST_QUANTITY_BY_QUEST_NAME)) {
+            preparedStatement.setString(1, questName);
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 while (resultSet.next()) {
                     counter =  resultSet.getInt(1);
@@ -90,7 +109,30 @@ public class QuestDAOImpl implements QuestDAO {
         }
         return quests;
     }
-
+    @Override
+    public List<Quest> searchQuests(String  name, int questPerPage, int currentPage) throws ConnectionPoolException {
+        List<Quest> quests = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(SEARCH_QUEST)) {
+            statement.setString(1,  name + "%");
+            statement.setInt(2, questPerPage);
+            int startIndex = (currentPage - 1) * questPerPage;
+            statement.setInt(3, startIndex);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Quest quest = new Quest();
+                    quest.setQuestId(resultSet.getInt(Constants.QUE_ID));
+                    quest.setName(resultSet.getString(Constants.QUE_NAME));
+                    quest.setDescription(resultSet.getString(Constants.QUE_DESCRIPTION));
+                    quest.setGenre(resultSet.getString(Constants.QUE_GENRE));
+                    quest.setImage(resultSet.getString(Constants.QUE_IMAGE));
+                    quests.add(quest);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ConnectionPoolException("Exception occurs during retrieving data of all quests", e);
+        }
+        return quests;
+    }
     @Override
     public List<Quest> getAllQuestByRating(int questPerPage, int currentPage) throws DaoException {
         List<Quest> quests = new ArrayList<>();

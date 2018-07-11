@@ -1,27 +1,70 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file = "part/head.jsp" %>
-  <body class="text-center">
-    <form class="form-signin" action="frontController" method="POST" style="width:30%; margin:30px auto;">
-    <input type="hidden" name="command" value="register"/>
-      <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Please Sign Up!</h1>
-       <h1 class="h3 mb-3 font-weight-normal">${error}</h1>
-       <label for="inputEmail" class="sr-only">Your First name, please!</label>
-      <input type="text" name="firstname" class="form-control" placeholder="First Name" required autofocus>
-       <label for="inputEmail" class="sr-only">Your Last name, please!</label>
-       <input type="text" name="lastname" class="form-control" placeholder="Last Name" required autofocus>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only" >Password</label>
-      <input type="password" class="form-control" name="password" placeholder="Password" required>
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" value="remember-me" style="margin-top:30px auto;"> Remember me
-        </label>
-      </div>
-      <button class="btn btn-danger" type="submit">Sign up!</button>
-      <p class="mt-5 mb-3 text-muted" style="margin-top:30px auto;">&copy; 2017-2018</p>
-       <a href="/">Go Back</a>
-    </form>
-<%@ include file = "part/footer.jsp" %>
+<%@ include file = "part/login_register_part/header.jsp" %>
+    <body background="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy5qddgAB5IVw1uPTuubGsDZoGMVdNYCqIdUPCqHxcP_VdTNnT">
+
+        <!-- Top content -->
+        <div class="top-content">
+
+            <div class="inner-bg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                            <h1><strong>QuestFire</strong></h1>
+                            <div class="description">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3 form-box">
+                        	<div class="form-top">
+                        		<div class="form-top-left">
+                        			<h3>Sign Up to our site</h3>
+                            		<p>Enter your personal data to register:</p>
+                        		</div>
+                        		<div class="form-top-right">
+                        			<i class="fa fa-lock"></i>
+                        		</div>
+                            </div>
+                            <div class="form-bottom">
+                            <form role="form" class="login-form"  name="loginForm" action="frontController" method="POST">
+                              <input type="hidden" name="command" value="register"/>
+                              	<div class="form-group">
+                              	<label class="sr-only" for="form-email">First Name</label>
+                              	<input type="text" name="firstname" placeholder="First Name..." class="form-username form-control" id="form-username">
+                              	</div>
+                              		<div class="form-group">
+                                    <label class="sr-only" for="form-email">Last Name</label>
+                                    <input type="text" name="lastname" placeholder="Last Name..." class="form-username form-control" id="form-username">
+                                    </div>
+			                    	<div class="form-group">
+			                    		<label class="sr-only" for="form-email">Email</label>
+			                        	<input type="text" name="email" placeholder="Email..." class="form-username form-control" id="form-username">
+			                        </div>
+			                        <div class="form-group">
+			                        	<label class="sr-only" for="form-password">Password</label>
+			                        	<input type="password" name="password" placeholder="Password..." class="form-password form-control" id="form-password">
+			                        </div>
+			                        <button type="submit" class="btn">Sign Up!</button>
+			                    </form>
+		                    </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3 social-login">
+                        	<h3>...or have an account:</h3>
+                        	<div class="social-login-buttons">
+	                        	<a class="btn btn-link-2" href="/login">
+	                        		 Sign Up!
+	                        	</a>
+                               <a class="btn btn-link-2" href="/home">
+	                        		 Go Back!
+	                        	</a>
+                        	</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+<%@ include file = "part/login_register_part/footer.jsp" %>

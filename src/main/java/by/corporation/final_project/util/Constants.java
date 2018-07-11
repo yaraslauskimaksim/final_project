@@ -17,7 +17,7 @@ public class Constants {
     public static final String CURRENT_PAGE= "currentPage";
     public static final int CURRENT_PAGE_DEFAULT = 1;
     public static final String QUESTS_PER_PAGE= "questsPerPage";
-    public static final int QUESTS_PER_PAGE_DEFAULT_VALUE = 6;
+    public static final int ITEMS_PER_PAGE = 6;
 
 
     /**
@@ -31,6 +31,9 @@ public class Constants {
     public static final String PATH_HOME = "path.page.home";
     public static final String PATH_QUEST_BY_RATING= "path.page.questByRating";
     public static final String PATH_REGISTER = "path.page.register";
+    public static final String PATH_BOOKING = "path.page.booking";
+    public static final String PATH_SHOW_USER_BOOKING = "/frontController?command=showUserBooking";
+    public static final String PATH_LOGIN = "path.page.login";
 
 
     /**
@@ -49,4 +52,12 @@ public class Constants {
     public static final String QUE_GENRE = "que_genre";
     public static final String QUE_IMAGE = "que_image";
     public static final String QUE_SCORE = "que_score";
+
+
+
+    /**
+     * These constants are for messages
+     */
+
+    public static final String INVALID_LOGIN_MESSAGE = "Sorry, Invalid Data! Please try again!";
 }

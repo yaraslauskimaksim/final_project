@@ -1,6 +1,7 @@
 package by.corporation.final_project.controller.command.impl.quest_owner;
 
 import by.corporation.final_project.controller.command.Command;
+import by.corporation.final_project.controller.command.util.ControllerUtil;
 import by.corporation.final_project.entity.Quest;
 import by.corporation.final_project.entity.Role;
 import by.corporation.final_project.service.exception.ServiceException;
@@ -23,11 +24,8 @@ public class ShowAllQuestCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws  IOException, ServletException {
-        int page = 0;
 
-        if(request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
-        }
+        int page = ControllerUtil.getCurrentPage(request);
 
         HttpSession session = request.getSession();
         Role role = (Role) session.getAttribute(Constants.ROLE);
@@ -35,14 +33,15 @@ public class ShowAllQuestCommand implements Command {
 
         if (role.equals(Role.QUEST_OWNER)) {
             String questRoomName = QuestServiceImpl.getQuestService().getQuestRoomName(userId);
-            int noOfRecords = QuestServiceImpl.getQuestService().getQuestQuantityByQuestRoom(questRoomName);
-            int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / Constants.QUESTS_PER_PAGE_DEFAULT_VALUE);
+            int numberOfRecords = QuestServiceImpl.getQuestService().getQuestQuantityByQuestRoom(questRoomName);
+            int numberOfPages = ControllerUtil.getNumberOfPage(numberOfRecords, Constants.ITEMS_PER_PAGE);
             List<Quest> quests = null;
             try {
                 quests = QuestServiceImpl.getQuestService().showAllQuestsOfQuestRoom(questRoomName, page);
-                request.setAttribute(Constants.QUESTS, quests);
-                request.setAttribute("noOfPages", noOfPages);
-                request.setAttribute("currentPage", page);
+                request.getSession().setAttribute("questRoomName", questRoomName);
+                request.getSession().setAttribute(Constants.QUESTS, quests);
+                request.getSession().setAttribute("noOfPages", numberOfPages);
+                request.getSession().setAttribute("currentPage", page);
                 path.append(request.getContextPath()).append(BundleResourceManager.getConfigProperty(Constants.PATH_QUESTS_BY_ROOM_NAME));
 
             } catch (ServiceException e) {

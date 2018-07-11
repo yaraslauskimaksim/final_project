@@ -22,7 +22,7 @@ public class ShowQuestByRatingCommand implements Command {
             page = Integer.parseInt(request.getParameter("page"));
         }
         int noOfRecords = QuestServiceImpl.getQuestService().getQuestQuantity();
-        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / Constants.QUESTS_PER_PAGE_DEFAULT_VALUE);
+        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / Constants.ITEMS_PER_PAGE);
 
 
         List<Quest> quest = null;

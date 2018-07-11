@@ -3,6 +3,7 @@ package by.corporation.final_project.controller.command;
 import by.corporation.final_project.controller.command.impl.LocaleCommand;
 import by.corporation.final_project.controller.command.impl.LoginCommand;
 import by.corporation.final_project.controller.command.impl.LogoutCommand;
+import by.corporation.final_project.controller.command.impl.SearhCommand;
 import by.corporation.final_project.controller.command.impl.administrator.CommentApprovalCommand;
 import by.corporation.final_project.controller.command.impl.administrator.CommentRejectionCommand;
 import by.corporation.final_project.controller.command.impl.administrator.ShowUserComment;
@@ -33,6 +34,11 @@ public class CommandType {
         commands.put("addQuest", new AddCommand());
         commands.put("editQuest", new EditCommand());
         commands.put("showQuestByRating", new ShowQuestByRatingCommand());
+        commands.put("booking", new BookingCommand());
+        commands.put("search", new SearhCommand());
+        commands.put("showUserBooking", new ShowUserBookingCommand());
+        commands.put("approveBooking", new BookingApprovalCommand());
+        commands.put("rejectBooking", new BookingRejectionCommand());
     }
 
     public static Command getCommands(String type) {

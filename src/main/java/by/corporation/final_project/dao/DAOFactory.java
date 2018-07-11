@@ -1,8 +1,10 @@
 package by.corporation.final_project.dao;
 
+import by.corporation.final_project.dao.mysql.BookingDAO;
 import by.corporation.final_project.dao.mysql.CommentDAO;
 import by.corporation.final_project.dao.mysql.QuestDAO;
 import by.corporation.final_project.dao.mysql.UserDAO;
+import by.corporation.final_project.dao.mysql.impl.BookingDAOImpl;
 import by.corporation.final_project.dao.mysql.impl.CommentDAOImpl;
 import by.corporation.final_project.dao.mysql.impl.QuestDAOImpl;
 import by.corporation.final_project.dao.mysql.impl.UserDAOImpl;
@@ -15,6 +17,7 @@ public class DAOFactory {
     private static final UserDAO userDAO = new UserDAOImpl(ConnectionPool.getInstance());
     private static final QuestDAO questDAO = new QuestDAOImpl(ConnectionPool.getInstance());
     private static final CommentDAO commentDAO = new CommentDAOImpl(ConnectionPool.getInstance());
+    private static final BookingDAO bookingDAO = new BookingDAOImpl(ConnectionPool.getInstance());
 
 
     private DAOFactory(){
@@ -39,5 +42,7 @@ public class DAOFactory {
         return commentDAO;
     }
 
-
+    public BookingDAO getBookingDAO() {
+        return bookingDAO;
+    }
 }

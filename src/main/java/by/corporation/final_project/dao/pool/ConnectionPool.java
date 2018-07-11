@@ -36,14 +36,19 @@ public final class ConnectionPool {
 
    public void initializeConnectionPool() throws ConnectionPoolException {
         initPoolSize();
+
        try {
+           Class.forName("com.mysql.cj.jdbc.Driver");
            connectionQueue = new ArrayBlockingQueue<>(poolSize);
            for (int i = 0; i < poolSize; i++) {
+
                Connection connection = DriverManager.getConnection(BundleResourceManager.getDatabasegProperty("db.url"), BundleResourceManager.getDatabasegProperty("db.user"), BundleResourceManager.getDatabasegProperty("db.password"));
                connectionQueue.add(new PooledConnection(connection));
            }
        } catch (SQLException e) {
            throw new ConnectionPoolException("Error during instantiation of the connection pool", e);
+       } catch (ClassNotFoundException e) {
+           e.printStackTrace();
        }
    }
 

@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<Configuration status="ERROR">
+<Configuration status="WARN">
     <Appenders>
-        <RollingFile name="File" fileName="log/log.txt"	filePattern="log/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH-mm}-%i.txt">
-            <PatternLayout pattern="%d{ABSOLUTE} %5p %t %c{1}:%M:%L - %m%n"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB" />
-                <TimeBasedTriggeringPolicy interval="10" modulate="true" />
-            </Policies>
-            <DefaultRolloverStrategy max="4" />
-        </RollingFile>
-
+        <File name="FileLogger" fileName="/home/redeyed/IdeaProjects/subscription/logs/app.log">
+            <PatternLayout
+                    pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+        </File>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout
+                    pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=black, DEBUG=green bold, TRACE=blue}"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="debug">
-            <AppenderRef ref="Console" />
-        </Root>
         <Root level="info">
-            <AppenderRef ref="Console" />
-        </Root>
-        <Root level="warn">
-            <AppenderRef ref="Console" />
-        </Root>
-        <Root level="error">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
-        </Root>
-        <Root level="trace">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
+            <AppenderRef ref="FileLogger"/>
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>
