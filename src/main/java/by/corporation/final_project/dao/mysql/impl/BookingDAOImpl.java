@@ -1,7 +1,7 @@
 package by.corporation.final_project.dao.mysql.impl;
 
 import by.corporation.final_project.dao.mysql.BookingDAO;
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.dao.pool.ConnectionPool;
 import by.corporation.final_project.entity.*;
 
@@ -33,7 +33,7 @@ public class BookingDAOImpl implements BookingDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_NEW_BOOKING_DETAIL, Statement.RETURN_GENERATED_KEYS);) {
             preparedStatement.setInt(1, booking.getUserId());
             preparedStatement.setInt(2, booking.getQuestId());
-            preparedStatement.setDate(3, new Date(booking.getDate().getTime()));
+            preparedStatement.setTimestamp(3, booking.getTimestamp());
             preparedStatement.setInt(4, booking.getNumberOfGuests());
             preparedStatement.executeUpdate();
             try (ResultSet resultSet = preparedStatement.getGeneratedKeys();) {
@@ -71,7 +71,7 @@ public class BookingDAOImpl implements BookingDAO {
                     booking.setBookingId(resultSet.getInt("boo_id"));
                     booking.setUserId(resultSet.getInt("boo_user_id"));
                     booking.setQuestId(resultSet.getInt("boo_quest_id"));
-                    booking.setDate(resultSet.getDate("boo_date"));
+                    booking.setTimestamp(resultSet.getTimestamp("boo_date"));
                     booking.setNumberOfGuests(resultSet.getInt("boo_number_of_guests"));
                     booking.setStatus(Status.valueOf(resultSet.getString("boo_status").toUpperCase()));
                     bookingList.add(booking);

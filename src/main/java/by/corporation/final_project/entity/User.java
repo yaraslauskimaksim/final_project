@@ -11,17 +11,19 @@ public class User extends Entity implements Serializable {
     private String firstName;
     private String lastName;
     private Role role;
+    private Status status;
 
 
     public User(){};
 
-    public User(String firstName, String lastName, String email, String password, Role role, int id){
+    public User(String firstName, String lastName, String email, String password, Role role, int id, Status status){
         this.firstName=firstName;
         this.lastName=lastName;
         this.email=email;
         this.password=password;
         this.role=role;
         this.id=id;
+        this.status=status;
     }
 
 
@@ -72,6 +74,13 @@ public class User extends Entity implements Serializable {
         this.id = id;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
 
     @Override
     public boolean equals(Object obj) {

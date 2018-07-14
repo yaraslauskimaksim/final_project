@@ -11,5 +11,7 @@ public interface CommentService {
     void saveComment(Comment comment) throws ServiceException, CommentSavingException;
     void setStatusToApprovedStatus(int com_id) throws ServiceException;
     void setStatusToRejectedStatus(int com_id) throws ServiceException;
-    List<Comment> showAllComments();
+    List<Comment> showAllComments(int currentPage) throws ServiceException;
+    int getCommentQuantity() throws ServiceException;
+    List<Comment> showAllCommentsByQuestId(int questId) throws ServiceException;
 }

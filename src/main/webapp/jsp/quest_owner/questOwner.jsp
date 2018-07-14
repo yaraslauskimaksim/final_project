@@ -75,8 +75,15 @@
    <textarea class="form-control" name="description"></textarea>
 </div>
 <div class="form-group">
-   <label for="message-text" class="col-form-label">Image Url:</label>
-   <input type="text" class="form-control" name="image">
+   <div class="input-group mb-3">
+     <div class="input-group-prepend">
+       <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+     </div>
+     <div class="custom-file">
+       <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+       <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+     </div>
+   </div>
 </div>
 <div class="form-group">
    <label for="message-text" class="col-form-label">Quest Room Name:</label>

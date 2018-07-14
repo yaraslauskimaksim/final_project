@@ -3,6 +3,7 @@ package by.corporation.final_project.controller.filter;
 
 
 import by.corporation.final_project.entity.Role;
+import by.corporation.final_project.entity.Status;
 import by.corporation.final_project.entity.User;
 
 import javax.servlet.*;
@@ -26,6 +27,7 @@ public class LoginFilter implements Filter {
 
         User user = (User) session.getAttribute("user");
         Role role = (Role) session.getAttribute("role");
+
         if (user == null) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {

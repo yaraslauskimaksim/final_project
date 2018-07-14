@@ -4,9 +4,7 @@ import by.corporation.final_project.controller.command.impl.LocaleCommand;
 import by.corporation.final_project.controller.command.impl.LoginCommand;
 import by.corporation.final_project.controller.command.impl.LogoutCommand;
 import by.corporation.final_project.controller.command.impl.SearhCommand;
-import by.corporation.final_project.controller.command.impl.administrator.CommentApprovalCommand;
-import by.corporation.final_project.controller.command.impl.administrator.CommentRejectionCommand;
-import by.corporation.final_project.controller.command.impl.administrator.ShowUserComment;
+import by.corporation.final_project.controller.command.impl.administrator.*;
 import by.corporation.final_project.controller.command.impl.quest_owner.*;
 import by.corporation.final_project.controller.command.impl.user.*;
 
@@ -22,7 +20,9 @@ public class CommandType {
         commands.put("logout", new LogoutCommand());
         commands.put("singleQuest", new SingleQuestCommand());
         commands.put("comment", new CommentCommand());
-        commands.put("show", new ShowUserComment());
+        //user's commands
+        commands.put("contact", new ContactCommand());
+        ///
         commands.put("quest", new QuestCommand());
         commands.put("local", new LocaleCommand());
         commands.put("setToApprovedStatus", new CommentApprovalCommand());
@@ -39,6 +39,13 @@ public class CommandType {
         commands.put("showUserBooking", new ShowUserBookingCommand());
         commands.put("approveBooking", new BookingApprovalCommand());
         commands.put("rejectBooking", new BookingRejectionCommand());
+        //Administrator commands
+        commands.put("showUserByStatus", new ShowUserByStatus());
+        commands.put("frozeUser", new FrozeUserCommand());
+        commands.put("makeUserActive", new MakeUserActiveCommand());
+        commands.put("show", new ShowUserComment());
+        commands.put("showUserMessages", new ShowUserMessageCommand());
+        commands.put("deleteMessage", new DeleteMessageCommand());
     }
 
     public static Command getCommands(String type) {

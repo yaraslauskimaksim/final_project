@@ -21,7 +21,7 @@ public class Constants {
 
 
     /**
-     * These constants are for path
+     * These constants are for path (User)
      */
     public static final String PATH_OWNER = "path.page.owner";
     public static final String PATH_SINGLE_QUEST_OWNER = "path.page.singleQuestOwner";
@@ -34,13 +34,28 @@ public class Constants {
     public static final String PATH_BOOKING = "path.page.booking";
     public static final String PATH_SHOW_USER_BOOKING = "/frontController?command=showUserBooking";
     public static final String PATH_LOGIN = "path.page.login";
+    /**
+     * These constants are for path (Administrator)
+     */
+    public static final String PATH_USER_STATUS = "path.page.userByStatus";
+    public static final String PATH_ADMIN= "path.page.admin";
+    public static final String PATH_SHOW_USER_ACTIVE = "frontController?command=showUserByStatus&status=active&page=";
+    public static final String PATH_SHOW_USER_FROZEN = "frontController?command=showUserByStatus&status=frozen&page=";
 
 
     /**
-     * These constants are for mysql queries
+     * These constants are for mysql queries (UserDAO)
      */
+
     public static final String FIRSTNAME = "usr_firstname";
     public static final String LASTNAME = "usr_lastname";
+    public static final String USR_ID = "usr_id";
+    public static final String USR_STATUS = "usr_status";
+    public static final String USR_EMAIL = "usr_email";
+
+    /**
+     * These constants are for mysql queries (UserDAO)
+     */
     public static final String QUE_NAME= "que_name";
     public static final String COMMENT_ID = "com_id";
     public static final String COMMENT_STATUS = "com_status";
@@ -55,9 +70,5 @@ public class Constants {
 
 
 
-    /**
-     * These constants are for messages
-     */
 
-    public static final String INVALID_LOGIN_MESSAGE = "Sorry, Invalid Data! Please try again!";
 }

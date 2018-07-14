@@ -1,6 +1,13 @@
-$(document).ready(function() {
-  $('#rating').click(function() {
-    $('#rating').attr('disabled', true); // Либо добавить атрибут disabled
+$(function() {
+  $(":radio").keypress(check_submit).each(function() {
+    check_submit();
   });
-
 });
+
+function check_submit() {
+  if ($(this).val().length == 0) {
+    $(":submit").attr("disabled", true);
+  } else {
+    $(":submit").removeAttr("disabled");
+  }
+}

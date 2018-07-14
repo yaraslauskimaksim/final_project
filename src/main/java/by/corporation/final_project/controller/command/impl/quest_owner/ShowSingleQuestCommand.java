@@ -1,7 +1,7 @@
 package by.corporation.final_project.controller.command.impl.quest_owner;
 
 import by.corporation.final_project.controller.command.Command;
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.entity.Quest;
 import by.corporation.final_project.entity.Role;
 import by.corporation.final_project.service.impl.QuestServiceImpl;

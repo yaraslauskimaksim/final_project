@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,25 +54,19 @@ public class BookingCommand implements Command {
 
     private Booking formBooking(HttpServletRequest request, HttpSession session){
         Booking booking = new Booking();
-        booking.setDate(parseDate(request));
+        booking.setTimestamp(parseDate(request));
         booking.setNumberOfGuests(Integer.valueOf(request.getParameter("numberOfGuests").trim()));
         booking.setUserId((Integer) session.getAttribute("userId"));
         booking.setQuestId((Integer) session.getAttribute("questId"));
         return booking;
     }
 
-    private Date parseDate(HttpServletRequest request){
+    private Timestamp parseDate(HttpServletRequest request){
 
         String date = request.getParameter("date").trim();
-        String time = request.getParameter("time").trim();
+        String time = request.getParameter("time").trim() + ":00.0";
         String booked = date + " " + time;
-        Date dateTime = null;
-        try {
-            dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(booked);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+        Timestamp dateTime = Timestamp.valueOf(booked);
         return dateTime;
     }
 

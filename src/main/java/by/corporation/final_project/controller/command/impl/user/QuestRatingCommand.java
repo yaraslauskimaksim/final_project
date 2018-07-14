@@ -18,10 +18,16 @@ public class QuestRatingCommand implements Command {
         Integer questId = (Integer) session.getAttribute("questId");
         //request
         Integer score = Integer.parseInt(request.getParameter("score").trim());
-        int newScore = QuestServiceImpl.getQuestService().getScore(questId, score);
-        QuestServiceImpl.getQuestService().setScore(newScore, questId);
-        request.getSession().setAttribute("questId", questId);
-        response.sendRedirect("frontController?command=singleQuest&questId="+questId);
-
+        if (score >= 0) {
+            int newScore = QuestServiceImpl.getQuestService().getScore(questId, score);
+            QuestServiceImpl.getQuestService().setScore(newScore, questId);
+            request.getSession().setAttribute("questId", questId);
+            response.sendRedirect("frontController?command=singleQuest&questId=" + questId);
+        } else {
+            request.getSession().setAttribute("noRating", "no rating");
+            response.sendRedirect("frontController?command=singleQuest&questId=" + questId);
+        }
     }
+
+
 }

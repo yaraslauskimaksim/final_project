@@ -3,7 +3,7 @@ package by.corporation.final_project.service.impl;
 import by.corporation.final_project.dao.DAOFactory;
 import by.corporation.final_project.dao.mysql.BookingDAO;
 
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.entity.Booking;
 import by.corporation.final_project.entity.Status;
 import by.corporation.final_project.service.BookingService;

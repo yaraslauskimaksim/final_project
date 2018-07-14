@@ -1,6 +1,7 @@
 package by.corporation.final_project.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -13,15 +14,15 @@ public class Booking implements Serializable {
     private Status status;
     private int userId;
     private int questId;
-    private Date date;
+    private Timestamp timestamp;
 
 
 
     public Booking(){}
 
-    public Booking( int bookingId, Date date, int numberOfGuests, User user, Quest quest, Status status, int userId, int questId){
+    public Booking( int bookingId, Timestamp timestamp, int numberOfGuests, User user, Quest quest, Status status, int userId, int questId){
         this.bookingId=bookingId;
-        this.date=date;
+        this.timestamp=timestamp;
         this.numberOfGuests=numberOfGuests;
         this.user=user;
         this.quest=quest;
@@ -86,11 +87,11 @@ public class Booking implements Serializable {
         this.questId = questId;
     }
 
-    public Date getDate() {
-        return date;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 }

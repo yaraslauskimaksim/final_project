@@ -1,7 +1,7 @@
 package by.corporation.final_project.dao.mysql.impl;
 
 import by.corporation.final_project.dao.mysql.QuestDAO;
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.dao.pool.ConnectionPool;
 import by.corporation.final_project.dao.pool.ConnectionPoolException;
 import by.corporation.final_project.entity.Quest;

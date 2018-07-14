@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file = "part/login_register_part/header.jsp" %>
-    <body background="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy5qddgAB5IVw1uPTuubGsDZoGMVdNYCqIdUPCqHxcP_VdTNnT">
+<body background="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy5qddgAB5IVw1uPTuubGsDZoGMVdNYCqIdUPCqHxcP_VdTNnT">
 
 
         <div class="top-content">
@@ -19,7 +19,9 @@
                         <div class="col-sm-6 col-sm-offset-3 form-box">
                         	<div class="form-top">
                         		<div class="form-top-left">
-                        			<h3>Login to our site <span> ${errorInLogin} </span></h3>
+                        			<h3>Login to our site <span> ${sessionScope.errorInLogin} </span>
+                        			<c:remove var="errorInLogin" scope="session" />
+                        			</h3>
                             		<p>Enter your email and password to log on: </p>
                         		</div>
                         		<div class="form-top-right">

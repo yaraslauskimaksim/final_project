@@ -123,3 +123,11 @@
       </div>
    </div>
 </div>
+<h1>
+       <c:choose>
+       <c:when test="${empty userId}">Please, Sign in to book the quest.</c:when>
+         <c:otherwise>
+      <a data-toggle="modal" data-target="#bookingModal">Like it? Book it! ${error} ${success} </a></h5>
+      </c:otherwise>
+</c:choose>
+</h1>

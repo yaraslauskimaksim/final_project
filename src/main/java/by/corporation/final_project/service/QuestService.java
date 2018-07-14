@@ -1,6 +1,6 @@
 package by.corporation.final_project.service;
 
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.entity.Quest;
 import by.corporation.final_project.service.exception.ServiceException;
 

@@ -1,9 +1,11 @@
 package by.corporation.final_project.controller.command.impl.user;
 
 import by.corporation.final_project.controller.command.Command;
-import by.corporation.final_project.dao.mysql.DaoException;
+import by.corporation.final_project.controller.command.util.ControllerUtil;
+import by.corporation.final_project.dao.exception.DaoException;
 import by.corporation.final_project.entity.Comment;
 import by.corporation.final_project.entity.Quest;
+import by.corporation.final_project.service.exception.ServiceException;
 import by.corporation.final_project.service.impl.CommentServiceImpl;
 import by.corporation.final_project.service.impl.QuestServiceImpl;
 import by.corporation.final_project.util.BundleResourceManager;
@@ -20,13 +22,13 @@ public class SingleQuestCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ControllerException {
-
+        int page = ControllerUtil.getCurrentPage(request);
         HttpSession session = request.getSession();
         int questId = Integer.parseInt(request.getParameter("questId").trim());
         Quest singleQuest = null;
         try {
             singleQuest = QuestServiceImpl.getQuestService().getSingleQuest(questId);
-            List<Comment> comments = CommentServiceImpl.getCommentService().showAllComments();
+            List<Comment> comments = CommentServiceImpl.getCommentService().showAllCommentsByQuestId(questId);
             if (singleQuest != null) {
                 request.getSession().setAttribute("quest", singleQuest);
                 request.getSession().setAttribute("questId", questId);
@@ -37,6 +39,8 @@ public class SingleQuestCommand implements Command {
         } catch (DaoException e) {
             response.sendRedirect(BundleResourceManager.getConfigProperty("path.page.quest"));
             throw new ControllerException("f", e);
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
 //
 //          UserDetails user = (UserDetails) session.getAttribute("user");

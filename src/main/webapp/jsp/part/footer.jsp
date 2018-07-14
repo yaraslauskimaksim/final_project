@@ -4,25 +4,18 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js" ></script>
-  <script data-require="MomentJS@2.10.0" data-semver="2.10.0" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script data-require="MomentJS@2.10.0" data-semver="2.10.0" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js" type="text/javascript"></script>
 
 
-
-
-
-
-<script src="../vendor/animsition/js/animsition.min.js"></script>
-<script src="../vendor/bootstrap/js/popper.js"></script>
-<script src="../vendor/select2/select2.min.js"></script>
-<script src="../vendor/daterangepicker/moment.min.js"></script>
-<script src="../vendor/daterangepicker/daterangepicker.js"></script>
-<script src="../vendor/countdowntime/countdowntime.js"></script>
 <script src="../js/card.js"></script>
 <script src="../js/submit.js"></script>
 <script src="../js/login.js"></script
 <script src="../js/rating.js"></script>
 <script src="../js/booking.js"></script>
+<script src="../js/contactForm.js"></script>
 <div class="modal fade" id="loginModal"  role="dialog" data-backdrop="static" data-keyboard="false">
 <div class="modal-dialog">
    <div class="modal-content">
