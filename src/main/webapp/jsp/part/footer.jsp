@@ -9,87 +9,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js" type="text/javascript"></script>
 
-
-<script src="../js/card.js"></script>
-<script src="../js/submit.js"></script>
-<script src="../js/login.js"></script
-<script src="../js/rating.js"></script>
-<script src="../js/booking.js"></script>
+<script src="../js/login.js"></script>
 <script src="../js/contactForm.js"></script>
-<div class="modal fade" id="loginModal"  role="dialog" data-backdrop="static" data-keyboard="false">
-<div class="modal-dialog">
-   <div class="modal-content">
-      <div class="modal-header">
-      <p class="statusMsg"></p>
-         <h5 class="modal-title" id="exampleModalLabel">Sign In!</h5>
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-         <span aria-hidden="true">&times;</span>
-         </button>
-      </div>
-      <div class="modal-body">
-         <form id="loginForm" name="loginForm" action="frontController" method="POST">
-            <input type="hidden" name="command" value="login"/>
-            <div class="form-group">
-               <label for="recipient-name" class="col-form-label">Email:</label>
-               <input class="form-control" type="text" name="email" id="email" placeholder="Email...">
-            </div>
-            <div class="form-group">
-               <label for="message-text" class="col-form-label">Password:</label>
-               <input  class="form-control" id="password" type="password" name="password" placeholder="*************">
-            </div>
-      </div>
-      <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#regModal">
-      Have not account yet?
-      </button>
-      <p id="ajaxGetUserServletResponse"></p>
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      <button id="submitBtn" type="submit" class="btn btn-danger" onclick="submitContactForm()">Sign In</button>
-
-      </div>
-   </div>
-   </form>
-</div>
-
- <div class="modal fade" id="regModal">
- <div class="modal-dialog">
-    <div class="modal-content">
-       <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Sign Up!</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-          </button>
-       </div>
-       <div class="modal-body">
-          <form action="frontController" method="POST">
-             <input type="hidden" name="command" value="register"/>
-             <div class="form-group">
-                <label for="recipient-name" class="col-form-label">First Name:</label>
-                <input class="form-control" type="text" name="firstname" placeholder="First Name..." required>
-             </div>
-             <div class="form-group">
-                <label for="message-text" class="col-form-label">Last Name:</label>
-                <input  class="form-control" type="text" name="lastname" placeholder="Last Name..." required>
-             </div>
-             <div class="form-group">
-                <label for="message-text" class="col-form-label">Email:</label>
-                <input  class="form-control" type="text" name="email" placeholder="ex@mail.com" required>
-             </div>
-             <div class="form-group">
-                <label for="message-text" class="col-form-label">Password:</label>
-                <input  class="form-control" type="password" name="password" placeholder="*************" required>
-             </div>
-       </div>
-       <div class="modal-footer">
-       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-       <button type="submit" class="btn btn-danger">Sign Up</button>
-       <c:if test="${not empty sessionScope.errorMessage}">
-       <p id="errorMessage">{sessionScope.errorMessage}</p>
-        <c:remove var="errorMessage" scope="session" />
-        </c:if>
-       </div>
-    </div>
-    </form>
- </div>
+<script src="../js/commentForm.js"></script>
  </body>
  </html>

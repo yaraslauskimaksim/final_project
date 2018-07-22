@@ -103,3 +103,11 @@ span{
      position: fixed;
      transition: top .5s linear;
 }
+
+.portfolio-item {
+  margin-bottom: 30px;
+}
+
+.pagination {
+  margin-bottom: 30px;
+}

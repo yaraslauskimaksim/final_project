@@ -1,15 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file = "part/header.jsp" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 
 <div class="album py-5 bg-light">
 <div class="container">
+<p> ${requestScope.emptyList}</p>
 <div class="row">
-<c:forEach items="${quest}" var="quest">
+<c:forEach items="${allQuests}" var="quest">
    <div class="col-md-4">
       <div class="card mb-4 box-shadow">
          <c:if test="${not empty quest.image}">
-            <img class="rounded-circle" src="${quest.image}" alt="" width="200" height="200">
+            <img class="card-img-top" src="uploadFiles/${quest.image}" alt="" width="200" height="200">
          </c:if>
          <div class="card-body">
             <p class="card-text">
@@ -26,9 +27,9 @@
             </p>
             <div class="d-flex justify-content-between align-items-center">
                <div class="btn-group">
-                  <a  class="btn btn-danger" href="frontController?command=singleQuest&questId=${quest.questId}">View</a>
+                  <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.questId}">View</a>
                   </div
-                  <small class="text-muted">9 mins</small>
+                  <small class="text-muted"><i class="far fa-smile">  <c:out value="${quest.score}"/></i></small>
                </div>
             </div>
          </div>

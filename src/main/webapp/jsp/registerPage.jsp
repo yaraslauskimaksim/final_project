@@ -19,7 +19,10 @@
                         <div class="col-sm-6 col-sm-offset-3 form-box">
                         	<div class="form-top">
                         		<div class="form-top-left">
-                        			<h3>Sign Up to our site</h3>
+                        			<h3>Sign Up to our site</h3><span> ${sessionScope.invalidFields} </span>
+                                    <c:remove var="error" scope="session" />
+                                    <span> ${sessionScope.userExits} </span>
+                                    <c:remove var="error" scope="session" />
                             		<p>Enter your personal data to register:</p>
                         		</div>
                         		<div class="form-top-right">

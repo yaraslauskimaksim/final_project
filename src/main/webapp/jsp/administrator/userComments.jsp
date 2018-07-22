@@ -47,6 +47,8 @@
    <li class="page-item">
       <c:forEach begin="1" end="${numberOfPages}" var="i">
          <c:choose>
+          <c:when test="${page eq 1}">
+                 </c:when>
             <c:when test="${page eq i}">
                <a class="page-link" href="${_contextPath}/frontController?command=show&page=${i}" > ${i}</a>
             </c:when>

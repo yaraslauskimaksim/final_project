@@ -3,6 +3,7 @@
 
   <div class="container marketing">
   <hr>
+  <h1 class="jumbotron-heading"> ${requestScope.emptyList}</h1>
   <div class="row">
     <c:forEach items="${messages}" var="message">
             <div class="col-lg-4">
@@ -29,6 +30,8 @@
    <li class="page-item">
       <c:forEach begin="1" end="${numberOfPages}" var="i">
          <c:choose>
+           <c:when test="${page eq 1}">
+                     </c:when>
             <c:when test="${page eq i}">
                <a class="page-link" href="${_contextPath}/frontController?command=showUserMessages&page=${i}" > ${i}</a>
             </c:when>

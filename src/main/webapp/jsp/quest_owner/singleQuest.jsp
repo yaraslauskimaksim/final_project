@@ -17,31 +17,30 @@
       <c:out value="${quest.genre}"/>
    </p>
    <hr>
-   <img id = "singleQuest" class="img-fluid rounded" src="${quest.image}" alt="">
+   <img id = "singleQuest" class="img-fluid rounded" src="uploadFiles/${quest.image}" alt="">
    <hr>
    <p class="lead">
       <c:out value="${quest.description}"/>
-   <blockquote class="blockquote">
-      <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-      <footer class="blockquote-footer">Someone famous in
-         <cite title="Source Title">Source Title</cite>
-      </footer>
-   </blockquote>
    <hr>
    </p>
 </div>
 <div class="col-md-4">
    <div class="card my-4">
-      <h5 class="card-header">Maybe you want to change something?</h5>
-      <div class="card-body">
-         <div class="input-group">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Edit</button>
-         </div>
+      <h5 class="card-header"><a class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">Edit Quest ${error} ${success} </a></h5>
+</h5>
+</div>
+      <div class="card my-4">
+      <form action="${_contextPath}/upload" method="POST" enctype="multipart/form-data">
+       <div class="form-group">
+       <input accept="image/*" style="padding:10px"  id="files" type="file" class="form-control-file" name="fileName" oninvalid="this.setCustomValidity('Image is a must')"  onchange="this.setCustomValidity('')" required >
+       </div>
+        <h5 class="card-header"><button class="btn btn-secondary" type="submit" class="btn btn-primary" value="Upload">Upload</button></h5>
+        </form>
+
       </div>
-   </div>
 </div>
 </div>
-</div>
+
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
 <div class="modal-content">
@@ -53,52 +52,35 @@
 </div>
 <div class="modal-body">
 <form action="${_contextPath}/frontController" method="POST" >
-<input type="hidden" name="command" value="editQuest"/>
+<input id="add_form" type="hidden" name="command" value="editQuest"/>
 <div class="form-group">
    <label for="recipient-name" class="col-form-label">Name:</label>
    <c:if test="${not empty quest.name}">
-      <input type="text" class="form-control" name="name"  value="<c:out value='${quest.name}'/>" />
+      <input type="text" class="form-control" name="name"  value="<c:out value='${quest.name}'/>" oninvalid="this.setCustomValidity('Quest Name is a must')"  onchange="this.setCustomValidity('')" required />
    </c:if>
    <c:if test="${empty quest.name}">
-      <input type="text" class="form-control" name="name" />
+      <input type="text" class="form-control" name="name" oninvalid="this.setCustomValidity('Quest Name is a must')"  onchange="this.setCustomValidity('')" required  />
    </c:if>
 </div>
 <div class="form-group">
    <label for="recipient-name" class="col-form-label">Genre:</label>
    <c:if test="${not empty quest.genre}">
-      <input type="text" class="form-control" name="genre"  value="<c:out value='${quest.genre}'/>" />
+      <input type="text" class="form-control" name="genre"  value="<c:out value='${quest.genre}'/>" oninvalid="this.setCustomValidity('Quest Genre is a must')"  onchange="this.setCustomValidity('')" required  />
    </c:if>
    <c:if test="${empty quest.genre}">
-      <input type="text" class="form-control" name="genre" />
+      <input type="text" class="form-control" name="genre" oninvalid="this.setCustomValidity('Quest Genre is a must')"  onchange="this.setCustomValidity('')" required />
    </c:if>
 </div>
 <div class="form-group">
    <label for="recipient-name" class="col-form-label">Description:</label>
    <c:if test="${not empty quest.description}">
-      <input type="text" class="form-control" name="description"  value="<c:out value='${quest.description}'/>" />
+      <input type="text" class="form-control" name="description"  value="<c:out value='${quest.description}'/>" oninvalid="this.setCustomValidity('Quest Description is a must')"  onchange="this.setCustomValidity('')" required />
    </c:if>
    <c:if test="${empty quest.description}">
-      <input type="text" class="form-control" name="description"  />
+      <input type="text" class="form-control" name="description" oninvalid="this.setCustomValidity('Quest Description is a must')"  onchange="this.setCustomValidity('')" required   />
    </c:if>
 </div>
-<div class="form-group">
-<label for="recipient-name" class="col-form-label">Description:</label>
-<c:if test="${not empty quest.image}">
-   <input type="text" class="form-control" name="image"  value="<c:out value='${quest.image}'/>" />
-</c:if>
-<c:if test="${ empty quest.image}">
-   <input type="text" class="form-control" name="image"/>
-</c:if>
- </div>
- <div class="form-group">
-    <label for="recipient-name" class="col-form-label">Quest Room Name:</label>
-    <c:if test="${not empty quest.questRoomName}">
-       <input type="text" class="form-control" name="roomName" value="<c:out value='${quest.questRoomName}'/>" />
-    </c:if>
-    <c:if test="${ empty quest.questRoomName}">
-       <input type="text" class="form-control" name="roomName"  />
-    </c:if>
- </div>
+
  </div>
  <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

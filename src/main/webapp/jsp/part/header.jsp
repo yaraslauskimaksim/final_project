@@ -12,7 +12,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" >
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -21,9 +21,10 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.0/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     <!-- Custom styles for this template -->
     <link href="../styles/album.css" rel="stylesheet">
     <link href="../styles/carousel.css" rel="stylesheet">
@@ -52,8 +53,8 @@
                       <li class="nav-item dropdown">
                          <a  class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Quests</a>
                          <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="frontController?command=quest&page=1">All Quests</a>
-                            <a class="dropdown-item" href="frontController?command=showQuestByRating&page=1">Top Quest</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=showQuestsByRoomName&page=1">Quests</a>
+
                          </div>
                       </li>
                    </c:when>
@@ -61,19 +62,41 @@
                       <li class="nav-item dropdown">
                          <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Items</a>
                          <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="frontController?command=show&page=1">Comments (${commentSize})</a>
-                            <a class="dropdown-item" href="frontController?command=showUserByStatus&status=active&page=1">Active Users</a>
-                            <a class="dropdown-item" href="frontController?command=showUserByStatus&status=frozen&page=1">Frozen Users</a>
-                             <a class="dropdown-item" href="frontController?command=showUserMessages&page=1">Messages</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=show&page=1">Comments</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserByStatus&status=active&page=1">Active Users</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserByStatus&status=frozen&page=1">Frozen Users</a>
+                             <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserMessages&page=1">Messages</a>
                          </div>
                       </li>
-                   </c:when>
+                       </c:when>
+                      <c:when test="${'ADMINISTRATOR' == sessionScope.role}">
+                                                 <li class="nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Items</a>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                                                       <a class="dropdown-item" href="${_contextPath}/frontController?command=show&page=1">Comments</a>
+                                                       <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserByStatus&status=active&page=1">Active Users</a>
+                                                       <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserByStatus&status=frozen&page=1">Frozen Users</a>
+                                                        <a class="dropdown-item" href="${_contextPath}/frontController?command=showUserMessages&page=1">Messages</a>
+                                                    </div>
+                                                 </li>
+                                              </c:when>
+
+                     <c:when test="${'CLIENT' == sessionScope.role}">
+                                         <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Items</a>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown01">
+                                             <a class="dropdown-item" href="${_contextPath}/frontController?command=quest&page=1">All Quests</a>
+                                                                         <a class="dropdown-item" href="${_contextPath}/frontController?command=showQuestByRating&page=1">Top Quest</a>
+                                               <a class="dropdown-item" href="${_contextPath}/frontController?command=showSingleUserBooking&page=1">My Booking</a>
+                                            </div>
+                                         </li>
+                                      </c:when>
                    <c:otherwise>
                       <li class="nav-item dropdown">
-                         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Quests</a>
+                         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Quests <i class="fas fa-bomb"></i></a>
                          <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="frontController?command=quest&page=1">All Quests</a>
-                            <a class="dropdown-item" href="frontController?command=showQuestByRating&page=1">Top Quest</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=quest&page=1">All Quests</a>
+                            <a class="dropdown-item" href="${_contextPath}/frontController?command=showQuestByRating&page=1">Top Quest</a>
                          </div>
                       </li>
                    </c:otherwise>
@@ -82,10 +105,10 @@
            <ul class="navbar-nav mr-auto">
               <c:if test="${empty user.email}">
                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign In / Sign Up</a>
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign In / Sign Up <i class="far fa-address-book"></i></a>
                       <div class="dropdown-menu" aria-labelledby="dropdown01">
-                       <a class="dropdown-item" href="/login">Sign In</a>
-                       <a class="dropdown-item" href="/register">Sign Up</a>
+                       <a class="dropdown-item" href="/login">${login}</a>
+                       <a class="dropdown-item" href="/register">${signup}</a>
                     </div>
                  </li>
               </c:if>
@@ -93,10 +116,10 @@
            </ul>
               <ul class="navbar-nav mr-auto">
                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Languages</a>
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Languages <i class="fas fa-globe"></i></a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
-                       <a class="dropdown-item" href="frontController?command=local&lang=ru">RU</a>
-                       <a class="dropdown-item" href="frontController?command=local&lang=en">EN</a>
+                       <a class="dropdown-item" href="${_contextPath}/frontController?command=local&lang=ru">RU</a>
+                       <a class="dropdown-item" href="${_contextPath}/frontController?command=local&lang=en">EN</a>
                     </div>
                  </li>
               </ul>
@@ -108,10 +131,10 @@
         <div class="container d-flex justify-content-between">
          <c:choose>
          <c:when test="${'QUEST_OWNER' == sessionScope.role}">
-          <a href="/questOwner" class="navbar-brand d-flex align-items-center">
+          <a href="/questOwner/home" class="navbar-brand d-flex align-items-center">
          </c:when>
          <c:when test="${'ADMINISTRATOR' == sessionScope.role}">
-         <a href="/administrator" class="navbar-brand d-flex align-items-center">
+         <a href="/administrator/home" class="navbar-brand d-flex align-items-center">
          </c:when>
            <c:otherwise>
          <a href="/home" class="navbar-brand d-flex align-items-center">
@@ -120,9 +143,23 @@
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDdee8Y-JW5FV4-h1U-lOFYvGXDUuhFHY5THAEAeoibanI49rBww" width="20" height="20" viewBox="0 0 24 24" fill="none" class="mr-2"/>
             <strong>QuestFire</strong>
           </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+      <c:choose>
+           <c:when test="${'ADMINISTRATOR' == sessionScope.role}">
+             </c:when>
+             <c:when test="${'QUEST_OWNER' == sessionScope.role}">
+             </c:when>
+           <c:otherwise>
+                       <form class="form-inline mt-2 mt-md-0" style="padding-left:450px" action="frontController" method="POST">
+                                 <input type="hidden" name="command" value="search"/>
+                                  <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="name">
+                                  <button class="btn btn-secondary" type="submit">Search</button>
+                                </form>
+
+                                      </c:otherwise>
+                                                        </c:choose>
+                                                          <button class="navbar-toggler" type="submit" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                                                                                           <span class="navbar-toggler-icon"></span>
+                                                                                         </button>
         </div>
       </div>
     </header>

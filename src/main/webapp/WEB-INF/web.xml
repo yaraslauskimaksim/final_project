@@ -10,46 +10,56 @@
 
 
     <listener>
-        <listener-class>by.corporation.final_project.controller.ContextListener</listener-class>
+        <listener-class>by.corporation.quest_fire.controller.ContextListener</listener-class>
     </listener>
+
     <filter>
-        <filter-name>UserFilter</filter-name>
-        <filter-class>by.corporation.final_project.controller.filter.UserFilter</filter-class>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>by.corporation.quest_fire.controller.filter.LoginFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>UserFilter</filter-name>
+        <filter-name>LoginFilter</filter-name>
         <url-pattern>/user/*</url-pattern>
     </filter-mapping>
-
-    <filter>
-        <filter-name>AdminFilter</filter-name>
-        <filter-class>by.corporation.final_project.controller.filter.AdminFilter</filter-class>
-    </filter>
     <filter-mapping>
-        <filter-name>AdminFilter</filter-name>
-        <url-pattern>/administrator/*</url-pattern>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>QuestOwnerFilter</filter-name>
-        <filter-class>by.corporation.final_project.controller.filter.QuestOwnerFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>QuestOwnerFilter</filter-name>
+        <filter-name>LoginFilter</filter-name>
         <url-pattern>/quest_owner/*</url-pattern>
     </filter-mapping>
-
-
-
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/administrator/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>by.corporation.quest_fire.controller.filter.EncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <servlet>
         <servlet-name>FrontController </servlet-name>
-        <servlet-class>by.corporation.final_project.controller.FrontController</servlet-class>
+        <servlet-class>by.corporation.quest_fire.controller.FrontController</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/frontController</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UploadController</servlet-name>
+        <servlet-class>by.corporation.quest_fire.controller.UploadController</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>524288</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UploadController</servlet-name>
+        <url-pattern>/upload</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>HomePage</servlet-name>
@@ -85,6 +95,14 @@
         <servlet-name>FrozenUser</servlet-name>
         <url-pattern>/user/frozen</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>SingleUserBooking</servlet-name>
+        <jsp-file>/jsp/user/singleUserBooking.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SingleUserBooking</servlet-name>
+        <url-pattern>/user/booking</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>QuestPage</servlet-name>
@@ -103,15 +121,15 @@
         <servlet-name>QuestByRatingPage</servlet-name>
         <url-pattern>/questRatingPage</url-pattern>
     </servlet-mapping>
-
     <servlet>
-        <servlet-name>BookingForm</servlet-name>
-        <jsp-file>/jsp/calendarForm.jsp</jsp-file>
+        <servlet-name>Search</servlet-name>
+        <jsp-file>/jsp/search.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BookingForm</servlet-name>
-        <url-pattern>/bookingForm</url-pattern>
+        <servlet-name>Search</servlet-name>
+        <url-pattern>/search</url-pattern>
     </servlet-mapping>
+
 
     <servlet>
         <servlet-name>QuestOwner</servlet-name>
@@ -119,7 +137,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>QuestOwner</servlet-name>
-        <url-pattern>/questOwner</url-pattern>
+        <url-pattern>/questOwner/home</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>OwnerByQuestRoomName</servlet-name>
@@ -127,7 +145,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>OwnerByQuestRoomName</servlet-name>
-        <url-pattern>/allQuests</url-pattern>
+        <url-pattern>/questOwner/allQuests</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>SingleQuestOwner</servlet-name>
@@ -135,7 +153,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>SingleQuestOwner</servlet-name>
-        <url-pattern>/singleQuest</url-pattern>
+        <url-pattern>/questOwner/singleQuest</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -144,7 +162,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>QuestOwnerBooking</servlet-name>
-        <url-pattern>/booking</url-pattern>
+        <url-pattern>/questOwner/booking</url-pattern>
     </servlet-mapping>
 
 
@@ -154,17 +172,15 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Administrator</servlet-name>
-        <url-pattern>/administrator</url-pattern>
+        <url-pattern>/administrator/home</url-pattern>
     </servlet-mapping>
-
-
     <servlet>
         <servlet-name>AdministratorComments</servlet-name>
         <jsp-file>/jsp/administrator/userComments.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>AdministratorComments</servlet-name>
-        <url-pattern>/userComment</url-pattern>
+        <url-pattern>/administrator/userComment</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>AdministratorUsers</servlet-name>
@@ -172,7 +188,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>AdministratorUsers</servlet-name>
-        <url-pattern>/user</url-pattern>
+        <url-pattern>/administrator/user</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>AdministratorMessages</servlet-name>
@@ -183,15 +199,13 @@
         <url-pattern>/administrator/messages</url-pattern>
     </servlet-mapping>
 
-
-    <servlet>
-        <servlet-name>ErrorPage</servlet-name>
-        <jsp-file>/jsp/error/error.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ErrorPage</servlet-name>
-        <url-pattern>/error</url-pattern>
-    </servlet-mapping>
-
+    <error-page>
+        <error-code>503</error-code>
+        <location>/jsp/error/503.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/jsp/error/401.jsp</location>
+    </error-page>
 </web-app>
 
