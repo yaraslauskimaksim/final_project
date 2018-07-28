@@ -1,10 +1,12 @@
 package by.corporation.quest_fire.dao.mysql.impl;
 
+import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
 import by.corporation.quest_fire.dao.mysql.MessageDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.dao.pool.ConnectionPool;
+import by.corporation.quest_fire.dao.pool.PooledConnection;
 import by.corporation.quest_fire.entity.*;
-import by.corporation.quest_fire.util.Constants;
+import by.corporation.quest_fire.util.Constant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,10 +35,14 @@ public class MessageDAOImpl implements MessageDAO {
      */
     @Override
     public int saveMessage(Message contactForm) throws DaoException {
-        Integer id = 0;
+        PooledConnection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_MESSAGE, Statement.RETURN_GENERATED_KEYS);) {
+        Integer id = 0;
+
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SAVE_MESSAGE, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, contactForm.getUserId());
             preparedStatement.setString(2, contactForm.getMessage());
             preparedStatement.executeUpdate();
@@ -47,8 +53,9 @@ public class MessageDAOImpl implements MessageDAO {
             throw new DaoException("Exception occurs during saving contact message", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -57,45 +64,65 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public List<Message> getAllMessages(int currentPage, int commentPerPage) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         List<Message> messages = new ArrayList<>();
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_MESSAGES);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(GET_MESSAGES);
             preparedStatement.setInt(1, commentPerPage);
             int startIndex = (currentPage - 1) * commentPerPage;
             preparedStatement.setInt(2, startIndex);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                User user = new User();
+                user.setFirstName(resultSet.getString(Constant.FIRSTNAME));
+                user.setLastName(resultSet.getString(Constant.LASTNAME));
+                user.setEmail(resultSet.getString(Constant.USR_EMAIL));
 
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                while (resultSet.next()) {
-                    User user = new User();
-                    user.setFirstName(resultSet.getString(Constants.FIRSTNAME));
-                    user.setLastName(resultSet.getString(Constants.LASTNAME));
-                    user.setEmail(resultSet.getString(Constants.USR_EMAIL));
+                Message message = new Message();
+                message.setMessage(resultSet.getString("mes_message"));
+                message.setId(resultSet.getInt("mes_id"));
+                message.setUser(user);
 
-                    Message message = new Message();
-                    message.setMessage(resultSet.getString("mes_message"));
-                    message.setId(resultSet.getInt("mes_id"));
-                    message.setUser(user);
+                messages.add(message);
 
-                    messages.add(message);
-                }
             }
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during getting all commnets", e);
+        } finally {
+            try {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
+                LOGGER.warn("Exception during closing DB resources.", e);
+            }
         }
         return messages;
     }
 
     @Override
     public int getMessageQuantity() throws DaoException {
+        PooledConnection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         int counter = 0;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(GET_MESSAGE_QUANTITY)) {
+        try{ connection = ConnectionPool.getInstance().getConnection();
+             statement = connection.createStatement();
+             resultSet = statement.executeQuery(GET_MESSAGE_QUANTITY);
             while (resultSet.next()) {
                 counter = resultSet.getInt(1);
             }
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during retrieving data of all quests", e);
+        } finally {
+            try {
+                ConnectionPool.getInstance().closeDBResources(resultSet, statement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
+                LOGGER.warn("Exception during closing DB resources.", e);
+            }
         }
         return counter;
     }

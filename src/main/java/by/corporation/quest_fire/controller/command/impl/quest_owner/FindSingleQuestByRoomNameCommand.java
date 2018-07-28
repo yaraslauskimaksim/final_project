@@ -4,7 +4,7 @@ import by.corporation.quest_fire.controller.command.Command;
 import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.controller.command.RequestContent;
 import by.corporation.quest_fire.controller.util.Constants;
-import by.corporation.quest_fire.controller.util.ControllerUtil;
+import by.corporation.quest_fire.controller.util.FrontControllerUtil;
 import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.entity.Role;
 import by.corporation.quest_fire.service.QuestService;
@@ -26,7 +26,6 @@ public class FindSingleQuestByRoomNameCommand implements Command {
 
         CommandResult commandResult = new CommandResult(FORWARD, BundleResourceManager.getConfigProperty(Constants.PATH_OWNER));
 
-        int page = ControllerUtil.getCurrentPage(requestContent);
         Role role = (Role) requestContent.getSessionAttribute(Constants.ROLE);
         int questId = Integer.parseInt(requestContent.getRequestParameter(Constants.QUEST_ID).trim());
 

@@ -8,8 +8,6 @@ public class Booking implements Serializable {
 
     private int bookingId;
     private int numberOfGuests;
-    private User user;
-    private Quest quest;
     private Status status;
     private int userId;
     private int questId;
@@ -19,12 +17,10 @@ public class Booking implements Serializable {
 
     public Booking(){}
 
-    public Booking( int bookingId, Timestamp timestamp, int numberOfGuests, User user, Quest quest, Status status, int userId, int questId){
+    public Booking( int bookingId, Timestamp timestamp, int numberOfGuests, Status status, int userId, int questId){
         this.bookingId=bookingId;
         this.timestamp=timestamp;
         this.numberOfGuests=numberOfGuests;
-        this.user=user;
-        this.quest=quest;
         this.status=status;
         this.userId=userId;
         this.questId =questId;
@@ -38,9 +34,6 @@ public class Booking implements Serializable {
         this.bookingId = bookingId;
     }
 
-    public User getUser() {
-        return user;
-    }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
@@ -48,18 +41,6 @@ public class Booking implements Serializable {
 
     public Status getStatus() {
         return status;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Quest getQuest() {
-        return quest;
-    }
-
-    public void setQuest(Quest quest) {
-        this.quest = quest;
     }
 
     public void setNumberOfGuests(int numberOfGuests) {

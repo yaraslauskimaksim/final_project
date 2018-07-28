@@ -6,6 +6,7 @@ import by.corporation.quest_fire.dao.mysql.BookingDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.entity.Booking;
 import by.corporation.quest_fire.entity.Status;
+import by.corporation.quest_fire.entity.dto.BookingTO;
 import by.corporation.quest_fire.service.BookingService;
 import by.corporation.quest_fire.service.exception.ServiceException;
 import by.corporation.quest_fire.service.util.Constants;
@@ -27,9 +28,9 @@ public class BookingServiceImpl implements BookingService {
     public int saveBookingDetails(Booking booking) throws ServiceException {
         int bookingId = 0;
         try {
-            bookingId = bookingDAO.saveBookigDetails(booking);
+            bookingId = bookingDAO.saveBookingDetails(booking);
         } catch (DaoException e) {
-            throw new ServiceException("Exceprion during saving booking details", e);
+            throw new ServiceException("Exception during saving booking details", e);
         }
         return bookingId;
     }
@@ -42,8 +43,8 @@ public class BookingServiceImpl implements BookingService {
      * @throws ServiceException the service exception
      */
     @Override
-    public List<Booking> fetchAllUserBooking(String questRoomName, int currentPage) throws ServiceException {
-        List<Booking> bookingList = new ArrayList<>();
+    public List<BookingTO> fetchAllUserBooking(String questRoomName, int currentPage) throws ServiceException {
+        List<BookingTO> bookingList = new ArrayList<>();
         try {
             bookingList = bookingDAO.fetchUserBooking(questRoomName, currentPage, Constants.ITEMS_PER_PAGE);
         } catch (DaoException e) {
@@ -53,14 +54,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findSingleUserBooking(int userId, int currentPage) throws ServiceException {
-        List<Booking> bookings = null;
+    public List<BookingTO> findSingleUserBooking(int userId) throws ServiceException {
+        List<BookingTO> bookings = null;
+        List<BookingTO> filteredBooking = new ArrayList<>();
         try {
-            bookings = bookingDAO.showSingleUserBookingDetails(userId, Constants.ITEMS_PER_PAGE, currentPage);
+            bookings = bookingDAO.fetchSingleUserBookingDetails(userId);
+            for (BookingTO bookingTO: bookings){
+                if(bookingTO.getTimestamp() == null){
+                    continue;
+                }
+                long time = System.currentTimeMillis();
+                if (bookingTO.getTimestamp().getTime() >= time) {
+                    filteredBooking.add(bookingTO);
+                }
+            }
         } catch (DaoException e) {
-            throw new ServiceException("", e);
+            throw new ServiceException("Exception occurs during retrieving data of a single user's booking", e);
         }
-        return bookings;
+        return filteredBooking;
     }
 
 
@@ -172,7 +183,7 @@ public class BookingServiceImpl implements BookingService {
     private int fetchBookingQuantityByQuestRoom(String questRoomName) {
         int counter = 0;
         try {
-            counter = bookingDAO.getBookingQuantityByQuestName(questRoomName);
+            counter = bookingDAO.fetchBookingQuantityByQuestName(questRoomName);
         } catch (DaoException e) {
             LOGGER.error("Exception during retrieving users' booking quantity", e);
         }

@@ -3,16 +3,16 @@ package by.corporation.quest_fire.dao.mysql;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.entity.Comment;
 import by.corporation.quest_fire.entity.Status;
+import by.corporation.quest_fire.entity.dto.CommentTO;
 
 import java.util.List;
 
 public interface CommentDAO {
-        int saveComment(Comment comment) throws DaoException;
-        List<Comment> getAllComment(int questPerPage, int currentPage ) throws DaoException;
-        void setCommentToApproved(int commentId) throws DaoException;
-        void deleteComment(int commentId) throws DaoException;
-        Status getStatus(int commentId) throws DaoException;
-        int getCommentQuantity() throws DaoException;
-        List<Comment> getAllCommentBuQuestId(int questId) throws DaoException;
-
+        void update(Comment comment) throws DaoException;
+        int create(Comment comment) throws DaoException;
+        List<CommentTO> fetchAllComment(int questPerPage, int currentPage) throws DaoException;
+        int fetchQuantity() throws DaoException;
+        List<CommentTO> fetchAllById(int questId) throws DaoException;
+        Comment fetchById(int commentId) throws DaoException;
+        List<Comment> fetchAllByUserId(int userId) throws DaoException;
 }

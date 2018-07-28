@@ -32,8 +32,7 @@ public class RatingCommand implements Command {
         QuestService questService = ServiceFactory.getInstance().getQuestService();
         int newScore = 0;
         try {
-            newScore = questService.fetchQuestScore(questId, score);
-            questService.updateScore(newScore, questId);
+            questService.updateScore(questId);
             commandResult.putSessionAttribute(Constants.RATING_SAVED, Constants.RATING_WAS_SAVED_MESSAGE);
             commandResult.setPage(Constants.RETURN_TO_SINGLE_QUEST_PAGE + questId);
         } catch (ServiceException e) {

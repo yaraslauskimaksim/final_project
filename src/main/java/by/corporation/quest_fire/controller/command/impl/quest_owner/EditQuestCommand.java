@@ -8,6 +8,7 @@ import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.entity.Role;
 import by.corporation.quest_fire.service.QuestService;
 import by.corporation.quest_fire.service.ServiceFactory;
+import by.corporation.quest_fire.service.exception.QuestAlreadyExistException;
 import by.corporation.quest_fire.service.exception.ServiceException;
 import by.corporation.quest_fire.util.BundleResourceManager;
 import org.apache.logging.log4j.LogManager;
@@ -30,20 +31,23 @@ public class EditQuestCommand implements Command {
         if (role.equals(Role.QUEST_OWNER)) {
             try {
                 QuestService questService = ServiceFactory.getInstance().getQuestService();
-                Quest quest = getQuest(requestContent);
+                Quest quest = formQuest(requestContent);
                 questService.updateQuest(quest);
                 commandResult.setPage(Constants.RETURN_TO_CREATED_QUEST_PAGE + questId);
-            } catch (ServiceException e) {
-                LOGGER.error("Exception during approving booking");
+            } catch (QuestAlreadyExistException e) {
+                LOGGER.warn("Such quest already exists");
+                commandResult.putSessionAttribute(Constants.QUEST_ALREADY_EXISTS, Constants.QUEST_ALREADY_EXISTS_MESSGE);
+                commandResult.setPage(requestContent.getReferer());
+            }catch (ServiceException e) {
+                LOGGER.error("Quest can't be edited", e);
                 commandResult.setPage(BundleResourceManager.getConfigProperty(Constants.ERROR_503));
             }
         }
 
-
         return commandResult;
     }
 
-    private Quest getQuest(RequestContent requestContent) {
+    private Quest formQuest(RequestContent requestContent) {
         Quest quest = new Quest();
         quest.setDescription(requestContent.getRequestParameter(Constants.QUEST_DESCRIPTION));
         quest.setName(requestContent.getRequestParameter(Constants.QUEST_NAME));

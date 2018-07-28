@@ -5,17 +5,19 @@ import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.controller.command.RequestContent;
 import by.corporation.quest_fire.controller.util.Constants;
 import by.corporation.quest_fire.entity.Quest;
-import by.corporation.quest_fire.entity.User;
 import by.corporation.quest_fire.service.QuestService;
 import by.corporation.quest_fire.service.ServiceFactory;
+import by.corporation.quest_fire.service.exception.QuestAlreadyExistException;
 import by.corporation.quest_fire.service.exception.ServiceException;
-import by.corporation.quest_fire.service.exception.ValidationException;
+
 import by.corporation.quest_fire.util.BundleResourceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static by.corporation.quest_fire.controller.command.CommandResult.RoutingType.REDIRECT;
-
+/**
+ * This command class is responsible for adding a new quest.
+ */
 public class AddQuestCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger(AddQuestCommand.class);
 
@@ -40,7 +42,7 @@ public class AddQuestCommand implements Command {
         } catch (ServiceException e) {
             LOGGER.error("Quest can't be added", e);
             commandResult.setPage(BundleResourceManager.getConfigProperty(Constants.ERROR_503));
-        } catch (ValidationException e) {
+        } catch (QuestAlreadyExistException e) {
             commandResult.putSessionAttribute(Constants.QUEST_ALREADY_EXISTS, Constants.QUEST_ALREADY_EXISTS_MESSGE);
             commandResult.setPage(requestContent.getReferer());
         }

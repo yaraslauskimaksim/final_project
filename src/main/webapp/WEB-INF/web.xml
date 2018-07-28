@@ -38,6 +38,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+
     <servlet>
         <servlet-name>FrontController </servlet-name>
         <servlet-class>by.corporation.quest_fire.controller.FrontController</servlet-class>

@@ -14,7 +14,7 @@ public interface UserService {
     User fetchUser(User user) throws ServiceException, ValidationException;
     void makeUserActive(int userId) throws ServiceException;
     void frozeUser(int userId) throws ServiceException;
-    List<User> getUsersByStatus(Status status, int currentPage);
-    int getUserQuantatyByStatus(Status status) throws ServiceException;
+    List<User> fetchUsersByStatus(Status status, int currentPage);
+    int fetchUserQuantityByStatus(Status status) throws ServiceException;
 
 }

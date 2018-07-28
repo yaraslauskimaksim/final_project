@@ -17,6 +17,10 @@ public class Quest implements Serializable {
     public Quest() {
     }
 
+    public Quest(int questId){
+        this.questId = questId;
+    }
+
     public Quest(int questId, String genre, String name, String description, String image, int score, int userId, String questRoomName) {
         this.questId = questId;
         this.genre = genre;

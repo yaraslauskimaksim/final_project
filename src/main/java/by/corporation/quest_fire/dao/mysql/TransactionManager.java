@@ -1,54 +1,57 @@
 package by.corporation.quest_fire.dao.mysql;
 
-import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.dao.pool.ConnectionPool;
+import by.corporation.quest_fire.dao.pool.PooledConnection;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class TransactionManager {
 
-    Connection connection = ConnectionPool.getInstance().getConnection();
+    private static final Logger LOGGER = LogManager.getLogger(TransactionManager.class);
+    private PooledConnection connection = ConnectionPool.getInstance().getConnection();
 
-    public void startTransaction() throws DaoException {
+    public void startTransaction()  {
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            LOGGER.log(Level.ERROR, "Transaction can not be started");
         }
     }
 
-    public void stopTransaction() throws DaoException {
+    public void stopTransaction() {
         try {
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            LOGGER.log(Level.ERROR, "Transaction can not be stopped");
         }
     }
 
-    public void commit() throws DaoException {
+    public void commit() {
         try {
             connection.commit();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            LOGGER.log(Level.ERROR, "Transaction can not be committed");
         }
     }
 
 
-    public void rollback() throws DaoException {
+    public void rollback() {
         try {
             connection.rollback();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            LOGGER.log(Level.ERROR, "Transaction can not be rollbacked");
         }
     }
 
 
-    public void setTransactionIsolation(int level) throws DaoException {
+    public void setTransactionIsolation(int level)  {
         try {
             connection.setTransactionIsolation(level);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            LOGGER.log(Level.ERROR, "Transaction isolation can not be set");
         }
 
     }

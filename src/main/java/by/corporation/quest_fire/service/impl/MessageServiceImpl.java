@@ -38,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getAllMessages(int currentPage) throws ServiceException {
+    public List<Message> fetchAllMessages(int currentPage) throws ServiceException {
         List<Message> messages = null;
         try {
             messages = messageDAO.getAllMessages(currentPage, Constants.ITEMS_PER_PAGE);
@@ -49,6 +49,14 @@ public class MessageServiceImpl implements MessageService {
 
     }
 
+    @Override
+    public void deleteMessage(int messageId) throws ServiceException {
+        try {
+            messageDAO.deleteMessage(messageId);
+        } catch (DaoException e) {
+            throw new ServiceException("Exception occurs during deletion of user's message", e);
+        }
+    }
 
     /**
      * The method returns the number of pages for pagination
@@ -59,17 +67,6 @@ public class MessageServiceImpl implements MessageService {
         int numberOfPages = ServiceUtil.getNumberOfPage(messageQuantity, Constants.ITEMS_PER_PAGE);
         return numberOfPages;
     }
-
-
-    @Override
-    public void deleteMessage(int messageId) throws ServiceException {
-        try {
-            messageDAO.deleteMessage(messageId);
-        } catch (DaoException e) {
-            throw new ServiceException("Exception occurs during deletion of user's message", e);
-        }
-    }
-
     /**
      * The method returns the quantity iof messages for pagination.
      */

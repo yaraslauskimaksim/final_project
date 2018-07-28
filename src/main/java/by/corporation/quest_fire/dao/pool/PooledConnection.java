@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-
+/**
+ * Wrapper class to use proxy connection as a normal connection.
+ * Implements AutoCloseable interface to be used in try-with-resources block.
+ */
 public class PooledConnection implements Connection, AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger(PooledConnection.class);
@@ -20,8 +23,22 @@ public class PooledConnection implements Connection, AutoCloseable {
         this.connection.setAutoCommit(true);
     }
 
-    public void reallyClose() throws SQLException {
-        connection.close();
+    public Connection getConnection() {
+        return connection;
+    }
+
+
+    @Override
+    public void close() throws SQLException {
+        if (connection.isClosed()) {
+            throw new SQLException("An attempt to close closed connection.");
+        } else {
+           connection.close();
+        }
+        if (!connection.isReadOnly()) {
+            connection.setReadOnly(false);
+        }
+        connection.setAutoCommit(true);
     }
 
     @Override
@@ -62,24 +79,6 @@ public class PooledConnection implements Connection, AutoCloseable {
     @Override
     public void rollback() throws SQLException {
         connection.rollback();
-    }
-
-
-    @Override
-    public void close() throws SQLException {
-        if (connection.isClosed()) {
-            throw new SQLException("An ettempt to close closed connection.");
-        }
-        if ( ! connection.isReadOnly()) {
-            connection.setReadOnly(false);
-        }
-
-        connection.setAutoCommit(true);
-
-        BlockingQueue<Connection> connectionQueue = ConnectionPool.getInstance().getConnectionQueue();
-        if ( ! connectionQueue.offer(this)) {
-            throw new SQLException("Error in returning connection to connection pool.");
-        }
     }
 
 

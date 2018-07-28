@@ -1,14 +1,14 @@
 package by.corporation.quest_fire.dao.mysql.impl;
 
+import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
 import by.corporation.quest_fire.dao.mysql.QuestDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.dao.mysql.TransactionManager;
 import by.corporation.quest_fire.dao.pool.ConnectionPool;
-import by.corporation.quest_fire.dao.pool.ConnectionPoolException;
+import by.corporation.quest_fire.dao.pool.PooledConnection;
 import by.corporation.quest_fire.dao.util.Constants;
 import by.corporation.quest_fire.entity.Quest;
 
-import by.corporation.quest_fire.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +24,6 @@ public class QuestDAOImpl implements QuestDAO {
 
     private static final Logger LOGGER = LogManager.getLogger(QuestDAOImpl.class);
 
-    TransactionManager transactionManager = new TransactionManager();
 
     private static final String SELECT_ALL_QUEST = "SELECT que_id, que_genre, que_name, que_description, que_image, que_score,  que_room_name  FROM quest LIMIT ? OFFSET ?";
     private static final String SELECT_SINGLE_QUEST = "SELECT que_id, que_genre, que_name, que_description, que_image, que_room_name FROM quest where que_id=?";
@@ -42,6 +41,8 @@ public class QuestDAOImpl implements QuestDAO {
     private static final String SEARCH_QUEST = "SELECT que_id, que_genre, que_name, que_description, que_image, que_room_name, que_user_id FROM quest WHERE que_name LIKE ?";
     private static final String ADD_IMAGE = "UPDATE quest SET que_image = ? WHERE que_id = ?";
     private static final String DELETE_COMMENT = "DELETE from comment WHERE com_quest_id = ?";
+    private static final String UPDATE = "UPDATE quest SET que_name = ?, que_genre = ?, que_description = ?, que_image = ?, que_score = ?, que_room_name = ? where que_id = ?";
+
     /**
      * The method returns the collection of {@link Quest} from db.
      *
@@ -51,44 +52,40 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public List<Quest> fetchAllQuests(int questPerPage, int currentPage) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
-        List<Quest> quests = new ArrayList<>();
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_QUEST)) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            statement = connection.prepareStatement(SELECT_ALL_QUEST);
             statement.setInt(1, questPerPage);
             int startIndex = (currentPage - 1) * questPerPage;
             statement.setInt(2, startIndex);
             resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Quest quest = new Quest();
-                quest.setQuestId(resultSet.getInt(Constants.QUEST_ID));
-                quest.setName(resultSet.getString(Constants.QUEST_NAME));
-                quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
-                quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
-                quest.setImage(resultSet.getString(Constants.QUEST_IMAGE));
-                quest.setScore(resultSet.getInt(Constants.QUEST_SCORE));
-                quest.setQuestRoomName(resultSet.getString(Constants.QUEST_ROOM_NAME));
-                quests.add(quest);
-            }
+            List<Quest> quests = formQuests(resultSet);
+            return quests;
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during retrieving all quests", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, statement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
-        return quests;
     }
 
 
     @Override
-    public int getQuestQuantityByQuestRoom(String questRoomName) throws DaoException {
+    public int fetchQuestQuantityByQuestRoom(String questRoomName) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         int counter = 0;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_QUEST_QUANTITY_BY_ROOM_NAME);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_ALL_QUEST_QUANTITY_BY_ROOM_NAME);
             preparedStatement.setString(1, questRoomName);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -98,8 +95,9 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception occurs during retrieving data of quest according to the search criteria", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().closeConnectionPool();
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -114,16 +112,26 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public int fetchQuestQuantity() throws DaoException {
+        PooledConnection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         int counter = 0;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(GET_ALL_QUEST_QUANTITY)) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(GET_ALL_QUEST_QUANTITY);
             while (resultSet.next()) {
                 counter = resultSet.getInt(1);
-
             }
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during retrieving the quantity of quests", e);
+        } finally {
+            try {
+                ConnectionPool.getInstance().closeDBResources(resultSet, statement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
+                LOGGER.warn("Exception during closing DB resources.", e);
+            }
         }
         return counter;
     }
@@ -135,10 +143,13 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public List<Quest> searchQuests(String name) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         List<Quest> quests = new ArrayList<>();
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SEARCH_QUEST)) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            statement = connection.prepareStatement(SEARCH_QUEST);
             statement.setString(1, name);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -154,8 +165,9 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception occurs during retrieving data of quest according to the search criteria", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, statement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -178,6 +190,26 @@ public class QuestDAOImpl implements QuestDAO {
         }
     }
 
+    @Override
+    public void update(Quest quest) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            statement = connection.prepareStatement(UPDATE);
+            formUpdate(statement, quest);
+        } catch (SQLException e) {
+            throw new DaoException("Exception occurs during adding image", e);
+        } finally {
+            try {
+                ConnectionPool.getInstance().closeStatement(statement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
+                LOGGER.warn("Exception during closing DB resources.", e);
+            }
+        }
+    }
+
     /**
      * The method returns the collection of {@link Quest} from db order by rating.
      *
@@ -187,10 +219,13 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public List<Quest> fetchAllQuestByRating(int questPerPage, int currentPage) throws DaoException {
+        Connection connection = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         List<Quest> quests = new ArrayList<>();
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_QUESTS_BY_RATING)) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            statement = connection.prepareStatement(SELECT_ALL_QUESTS_BY_RATING);
             statement.setInt(1, questPerPage);
             int startIndex = (currentPage - 1) * questPerPage;
             statement.setInt(2, startIndex);
@@ -210,8 +245,9 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception occurs during retrieving data of all quests", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, statement);
+                ConnectionPool.getInstance().closeConnectionPool();
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -227,30 +263,28 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public Quest fetchSingleQuest(int questId) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        Quest quest = new Quest();
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SINGLE_QUEST);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_SINGLE_QUEST);
             preparedStatement.setInt(1, questId);
             resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
-                quest.setName(resultSet.getString(Constants.QUEST_NAME));
-                quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
-                quest.setImage(resultSet.getString(Constants.QUEST_IMAGE));
-                quest.setQuestRoomName(resultSet.getString(Constants.QUEST_ROOM_NAME));
-            }
+            Quest quest = formQuest(resultSet);
+            return quest;
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during retrieving data about one single quest", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
-        return quest;
     }
+
 
     /**
      * The method returns the score of the quest
@@ -260,10 +294,13 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public int fetchScoreQuest(int questId) throws DaoException {
+        PooledConnection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         int score = 0;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_QUEST_SCORE);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_QUEST_SCORE);
             preparedStatement.setInt(1, questId);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -275,8 +312,9 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception occurs during retrieving data of quest score", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().releaseConnection(connection);
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -303,24 +341,30 @@ public class QuestDAOImpl implements QuestDAO {
     }
 
     /**
-     * The method id for deleting quest.
-     *  There is a transaction here. Comments, connected to the quest,
-     *  are also deleted.
-     * @param questId is the constant for verifying the definite quest
+     * The method is for deleting quest.
+     * There is a transaction here. Comments, connected to the quest,
+     * are also deleted.
+     *
+     * @param questId is for verifying what quest needs to be deleted
      * @throws DaoException the dao exception
      */
     @Override
     public void deleteQuest(int questId) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement1 = connection.prepareStatement(DELETE_COMMENT);
-             PreparedStatement preparedStatement2 = connection.prepareStatement(DELETE_QUEST)) {
-
+        ResultSet resultSet = null;
+        PooledConnection connection = null;
+        PreparedStatement statement1 = null;
+        PreparedStatement statement2 = null;
+        TransactionManager transactionManager = null;
+        try { connection = ConnectionPool.getInstance().getConnection();
+             statement1 = connection.prepareStatement(DELETE_COMMENT);
+             statement2 = connection.prepareStatement(DELETE_QUEST);
+            transactionManager = new TransactionManager();
             transactionManager.startTransaction();
-            preparedStatement1.setInt(1, questId);
-            preparedStatement1.executeUpdate();
+            statement1.setInt(1, questId);
+            statement1.executeUpdate();
 
-            preparedStatement2.setInt(1, questId);
-            preparedStatement2.executeUpdate();
+            statement2.setInt(1, questId);
+            statement2.executeUpdate();
 
             transactionManager.commit();
             transactionManager.stopTransaction();
@@ -344,7 +388,6 @@ public class QuestDAOImpl implements QuestDAO {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-
             throw new DaoException("Exception during rollback transaction of replacing product.", e);
         }
 
@@ -356,10 +399,13 @@ public class QuestDAOImpl implements QuestDAO {
      * @throws DaoException the dao exception
      */
     public Integer addQuest(Quest quest) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer idQuest = 0;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(ADD_NEW_QUEST, Statement.RETURN_GENERATED_KEYS);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(ADD_NEW_QUEST, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, quest.getGenre());
             preparedStatement.setString(2, quest.getName());
             preparedStatement.setString(3, quest.getDescription());
@@ -375,8 +421,9 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception during adding a new quest", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().closeConnectionPool();
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
@@ -432,10 +479,13 @@ public class QuestDAOImpl implements QuestDAO {
 
     @Override
     public String getQuestRoomName(int userId) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String name = null;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_QUEST_ROOM_NAME);) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_QUEST_ROOM_NAME);
             preparedStatement.setInt(1, userId);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -445,12 +495,52 @@ public class QuestDAOImpl implements QuestDAO {
             throw new DaoException("Exception occurs during retrieving quest room name", e);
         } finally {
             try {
-                ConnectionPool.getInstance().closeResourses(resultSet);
-            } catch (SQLException e) {
+                ConnectionPool.getInstance().closeDBResources(resultSet, preparedStatement);
+                ConnectionPool.getInstance().closeConnectionPool();
+            } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
         }
         return name;
+    }
+
+    private void formUpdate(PreparedStatement statement, Quest quest) throws SQLException {
+        statement.setString(1, quest.getName());
+        statement.setString(2, quest.getGenre());
+        statement.setString(3, quest.getDescription());
+        statement.setString(4, quest.getImage());
+        statement.setInt(5, quest.getScore());
+        statement.setString(6, quest.getQuestRoomName());
+        statement.setInt(7, quest.getQuestId());
+        statement.executeUpdate();
+    }
+
+    private List<Quest> formQuests(ResultSet resultSet) throws SQLException {
+        List<Quest> quests = new ArrayList<>();
+        while (resultSet.next()) {
+            Quest quest = new Quest();
+            quest.setQuestId(resultSet.getInt(Constants.QUEST_ID));
+            quest.setName(resultSet.getString(Constants.QUEST_NAME));
+            quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
+            quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
+            quest.setImage(resultSet.getString(Constants.QUEST_IMAGE));
+            quest.setScore(resultSet.getInt(Constants.QUEST_SCORE));
+            quest.setQuestRoomName(resultSet.getString(Constants.QUEST_ROOM_NAME));
+            quests.add(quest);
+        }
+        return quests;
+    }
+
+    private Quest formQuest(ResultSet resultSet) throws SQLException {
+        Quest quest = new Quest();
+        while (resultSet.next()) {
+            quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
+            quest.setName(resultSet.getString(Constants.QUEST_NAME));
+            quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
+            quest.setImage(resultSet.getString(Constants.QUEST_IMAGE));
+            quest.setQuestRoomName(resultSet.getString(Constants.QUEST_ROOM_NAME));
+        }
+        return quest;
     }
 
 }

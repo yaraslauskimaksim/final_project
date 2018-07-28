@@ -1,6 +1,15 @@
 package by.corporation.quest_fire.util;
 
-public class Constants {
+public class Constant {
+    /**
+     * These constants are for connection pool
+     */
+    public static final String URL = "db.url";
+    public static final String USER = "db.user";
+    public static final String PASSWORD = "db.password";
+    public static final String POOL_INITIAL_SIZE = "pool.size";
+    public static final String POOL_CAPACITY = "pool.capacity";
+    public static final String POOL_TIMEOUT = "pool.timeout";
     /**
      * These constants are for command variables
      */

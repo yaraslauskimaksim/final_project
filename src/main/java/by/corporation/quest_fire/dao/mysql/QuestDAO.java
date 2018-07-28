@@ -1,7 +1,6 @@
 package by.corporation.quest_fire.dao.mysql;
 
 import by.corporation.quest_fire.dao.exception.DaoException;
-import by.corporation.quest_fire.dao.pool.ConnectionPoolException;
 import by.corporation.quest_fire.entity.Quest;
 
 import java.util.List;
@@ -18,8 +17,9 @@ public interface QuestDAO {
     List<Quest> getAllQuestByQuestRoomName(String questRoomName, int questPerPage, int currentPage) throws DaoException;
     String getQuestRoomName(int userId) throws DaoException;
     int fetchQuestQuantity() throws DaoException;
-    int getQuestQuantityByQuestRoom(String questRoomName) throws DaoException;
+    int fetchQuestQuantityByQuestRoom(String questRoomName) throws DaoException;
     List<Quest> fetchAllQuestByRating(int questPerPage, int currentPage) throws  DaoException;
-    List<Quest> searchQuests(String  name) throws  DaoException;
+    List<Quest> searchQuests(String name) throws  DaoException;
     void addImage(String image, Integer questId) throws DaoException;
+    void update(Quest quest) throws DaoException;
 }

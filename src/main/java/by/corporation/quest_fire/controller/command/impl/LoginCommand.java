@@ -41,6 +41,7 @@ public class LoginCommand implements Command {
                 commandResult.putSessionAttribute(Constants.USER_ID, user.getId());
                 commandResult.putSessionAttribute(Constants.USER, user);
                 commandResult.putSessionAttribute(Constants.ROLE, user.getRole());
+                commandResult.putSessionAttribute(Constants.STATUS, user.getStatus());
                 commandResult.setPage(identifyRole(user.getRole(), user.getStatus()));
             } else {
                 commandResult.putSessionAttribute(Constants.LOGIN_ERROR, Constants.INVALID_LOGIN_MESSAGE);

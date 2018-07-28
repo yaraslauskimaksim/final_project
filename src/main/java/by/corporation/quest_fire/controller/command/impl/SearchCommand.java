@@ -4,7 +4,6 @@ import by.corporation.quest_fire.controller.command.Command;
 import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.controller.command.RequestContent;
 import by.corporation.quest_fire.controller.util.Constants;
-import by.corporation.quest_fire.controller.util.ControllerUtil;
 import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.service.QuestService;
 import by.corporation.quest_fire.service.ServiceFactory;
@@ -13,11 +12,9 @@ import by.corporation.quest_fire.util.BundleResourceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.List;
 
-import static by.corporation.quest_fire.controller.command.CommandResult.RoutingType.FORWARD;
+import static by.corporation.quest_fire.controller.command.CommandResult.RoutingType.REDIRECT;
 
 /**
  * This command class is responsible for searching quest by quest name
@@ -33,7 +30,7 @@ public class SearchCommand implements Command {
      */
     @Override
     public CommandResult execute(RequestContent requestContent) {
-        CommandResult commandResult = new CommandResult(FORWARD, requestContent.getReferer());
+        CommandResult commandResult = new CommandResult(REDIRECT, requestContent.getReferer());
 
         String name = requestContent.getRequestParameter(Constants.SEARCH_NAME);
 

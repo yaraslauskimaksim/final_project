@@ -42,7 +42,6 @@ public class LoginFilter implements Filter {
                 if(status.equals(Status.ACTIVE)) {
                     httpResponse.sendRedirect(httpRequest.getContextPath() + BundleResourceManager.getConfigProperty(Constants.PATH_HOME));
                     break;
-
                 }else {
                     chain.doFilter(request, response);
                     break;

@@ -61,6 +61,8 @@ public class UserCommentCommand implements Command {
         Comment comment = new Comment();
         comment.setUserId((Integer) requestContent.getSessionAttribute(Constants.USER_ID));
         comment.setQuestId(questId);
+        String description = requestContent.getRequestParameter(Constants.COMMENT_DESCRIPTION);
+
         comment.setDescription(requestContent.getRequestParameter(Constants.COMMENT_DESCRIPTION));
         comment.setTime(formCurrentDate());
         return comment;

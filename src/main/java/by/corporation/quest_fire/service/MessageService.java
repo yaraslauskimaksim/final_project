@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MessageService {
     int saveMessage(Message message) throws ServiceException;
-    List<Message> getAllMessages(int currentPage) throws ServiceException;
+    List<Message> fetchAllMessages(int currentPage) throws ServiceException;
     int fetchNumberOfPages();
     void deleteMessage(int messageId) throws ServiceException;
 }

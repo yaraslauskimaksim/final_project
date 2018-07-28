@@ -6,11 +6,12 @@ import by.corporation.quest_fire.dao.DAOFactory;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.entity.Comment;
 import by.corporation.quest_fire.entity.Status;
+import by.corporation.quest_fire.entity.dto.CommentTO;
 import by.corporation.quest_fire.service.CommentService;
 import by.corporation.quest_fire.service.exception.ServiceException;
 import by.corporation.quest_fire.service.exception.ValidationException;
-import by.corporation.quest_fire.util.Constants;
-
+import by.corporation.quest_fire.service.util.ServiceUtil;
+import by.corporation.quest_fire.util.Constant;
 
 import java.util.List;
 
@@ -20,9 +21,10 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * The method returns the auto generated id for comment and save the comment
+     *
      * @param comment is received from comment form
-     * @throws ValidationException       if user does not fill in anithing
-     * @throws ServiceException          the service exception
+     * @throws ValidationException if user does not fill in anithing
+     * @throws ServiceException
      */
     @Override
     public int saveComment(Comment comment) throws ServiceException, ValidationException {
@@ -31,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ValidationException("Exception during saving empty comment");
         }
         try {
-            commentId = commentDAO.saveComment(comment);
+            commentId = commentDAO.create(comment);
         } catch (DaoException e) {
             throw new ServiceException("Exception during saving comment", e);
         }
@@ -39,12 +41,29 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
+    /**
+     * The method returns the collection {@link CommentTO} and
+     * transfers it to Controller layer.
+     *
+     * @param currentPage is where user currently is.
+     * @throws ServiceException
+     */
+    @Override
+    public List<CommentTO> fetchAllComments(int currentPage) throws ServiceException {
+        List<CommentTO> comments = null;
+        try {
+            comments = commentDAO.fetchAllComment(currentPage, Constant.ITEMS_PER_PAGE);
+        } catch (DaoException e) {
+            throw new ServiceException("Exception occurs during retrieving all comments", e);
+        }
+        return comments;
+    }
 
     @Override
-    public List<Comment> showAllComments(int currentPage) throws ServiceException {
-        List<Comment> comments = null;
+    public List<CommentTO> fetchAllCommentsByQuestId(int questId) throws ServiceException {
+        List<CommentTO> comments = null;
         try {
-            comments = commentDAO.getAllComment(currentPage, Constants.ITEMS_PER_PAGE);
+            comments = commentDAO.fetchAllById(questId);
         } catch (DaoException e) {
             throw new ServiceException("", e);
         }
@@ -52,50 +71,55 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> showAllCommentsByQuestId(int questId) throws ServiceException {
-        List<Comment> comments = null;
+    public int fetchNumberOfPages() throws ServiceException {
+        int numberOfRecords = fetchCommentQuantity();
+        int numberOfPages = ServiceUtil.getNumberOfPage(numberOfRecords, Constant.ITEMS_PER_PAGE);
+        return numberOfPages;
+    }
+
+
+    @Override
+    public void approveComment(int commentId) throws ServiceException {
         try {
-            comments = commentDAO.getAllCommentBuQuestId(questId);
+            Comment comment = fetchComment(commentId);
+            Status status = comment.getStatus();
+            if (status.equals(Status.PENDING)) {
+                comment.setStatus(Status.APPROVED);
+                commentDAO.update(comment);
+            }
         } catch (DaoException e) {
-            throw new ServiceException("", e);
+            throw new ServiceException("Exception occurs during setting the comment to approveComment status", e);
         }
-        return comments;
     }
 
     @Override
-    public int getCommentQuantity() throws ServiceException {
+    public void rejectComment(int commentId) throws ServiceException {
+        try {
+            Comment comment = fetchComment(commentId);
+            Status status = comment.getStatus();
+            if (status.equals(Status.PENDING)) {
+                comment.setStatus(Status.REJECTED);
+                commentDAO.update(comment);
+            }
+        } catch (DaoException e) {
+            throw new ServiceException("Exception occurs during setting the comment to rejected status", e);
+        }
+
+    }
+
+    private Comment fetchComment(int commentId) throws DaoException {
+        Comment comment = commentDAO.fetchById(commentId);
+        return comment;
+    }
+
+    private int fetchCommentQuantity() throws ServiceException {
         int counter = 0;
         try {
-            counter = commentDAO.getCommentQuantity();
+            counter = commentDAO.fetchQuantity();
         } catch (DaoException e) {
-           throw new ServiceException("", e);
+            throw new ServiceException("", e);
         }
         return counter;
     }
 
-    public void setStatusToApprovedStatus(int comId) throws ServiceException {
-        Status status = null;
-        try {
-            status = commentDAO.getStatus(comId);
-            if (status.equals(Status.PENDING)) {
-                commentDAO.setCommentToApproved(comId);
-            }
-        } catch (DaoException e) {
-            throw new ServiceException("Exception occurs during setting to approve status", e);
-        }
-
-    }
-    @Override
-    public void setStatusToRejectedStatus(int comId) throws ServiceException {
-        Status status;
-        try {
-            status = commentDAO.getStatus(comId);
-            if (status.equals(Status.PENDING)) {
-                commentDAO.deleteComment(comId);
-            }
-        } catch (DaoException e) {
-            throw new ServiceException("Exception occurs during setting to rejected status", e);
-        }
-
-    }
 }

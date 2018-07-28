@@ -4,7 +4,7 @@ import by.corporation.quest_fire.controller.command.Command;
 import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.controller.command.RequestContent;
 import by.corporation.quest_fire.controller.util.Constants;
-import by.corporation.quest_fire.controller.util.ControllerUtil;
+import by.corporation.quest_fire.controller.util.FrontControllerUtil;
 import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.service.QuestService;
 import by.corporation.quest_fire.service.ServiceFactory;
@@ -27,7 +27,7 @@ public class FindAllQuestByRoomCommand implements Command {
 
         CommandResult commandResult = new CommandResult(FORWARD, BundleResourceManager.getConfigProperty(Constants.PATH_OWNER));
 
-        int page = ControllerUtil.getCurrentPage(requestContent);
+        int page = FrontControllerUtil.getCurrentPage(requestContent);
 
         Integer userId = (Integer) requestContent.getSessionAttribute(Constants.USER_ID);
 

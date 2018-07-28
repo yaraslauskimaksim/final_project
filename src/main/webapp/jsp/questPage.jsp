@@ -1,4 +1,5 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@ taglib uri="/WEB-INF/taglib/paginator.tld" prefix="paginator" %>
 <%@ include file = "part/header.jsp" %>
 
 
@@ -37,32 +38,12 @@
 </c:forEach>
 </div>
 <ul class="pagination justify-content-center">
-     <c:if test="${currentPage != 1}">
-        <li class="page-item">
-           <a class="page-link" href="frontController?command=quest&page=${currentPage - 1}" aria-label="Previous">
-           <span aria-hidden="true">&laquo;</span>
-           <span class="sr-only">Previous</span>
-           </a>
-        </li>
-     </c:if>
-     <li class="page-item">
-        <c:forEach begin="1" end="${numberOfPages}" var="i">
-           <c:choose>
-              <c:when test="${currentPage eq i}">
-                 <a class="page-link" href="frontController?command=quest&page=${i}" > ${i}</a>
-              </c:when>
-           </c:choose>
-        </c:forEach>
-     </li>
-     <li class="page-item">
-        <c:if test="${currentPage lt numberOfPages}">
-           <a class="page-link" href="frontController?command=quest&page=${currentPage + 1}" aria-label="Next">
-           <span aria-hidden="true">&raquo;</span>
-           <span class="sr-only">Next</span>
-           </a>
-        </c:if>
-     </li>
-  </ul>
+
+         <paginator:display currentPage="${requestScope.currentPage}" numberOfPages="${requestScope.numberOfPages}" viewPageCount="1" url="frontController?command=quest&" />
+
+        </ul>
+
+
   </div>
   </div>
   <%@ include file = "part/footer.jsp" %>

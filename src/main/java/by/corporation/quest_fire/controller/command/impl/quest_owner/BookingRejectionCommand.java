@@ -4,7 +4,7 @@ import by.corporation.quest_fire.controller.command.Command;
 import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.controller.command.RequestContent;
 import by.corporation.quest_fire.controller.util.Constants;
-import by.corporation.quest_fire.controller.util.ControllerUtil;
+import by.corporation.quest_fire.controller.util.FrontControllerUtil;
 import by.corporation.quest_fire.entity.Role;
 import by.corporation.quest_fire.service.BookingService;
 import by.corporation.quest_fire.service.ServiceFactory;
@@ -25,7 +25,7 @@ public class BookingRejectionCommand implements Command {
 
         Role role = (Role) requestContent.getSessionAttribute(Constants.ROLE);
         int bookingId = Integer.parseInt(requestContent.getRequestParameter(Constants.ID).trim());
-        int page = ControllerUtil.getCurrentPage(requestContent);
+        int page = FrontControllerUtil.getCurrentPage(requestContent);
         if (role.equals(Role.QUEST_OWNER)) {
             try {
                 BookingService bookingService = ServiceFactory.getInstance().getBookingService();

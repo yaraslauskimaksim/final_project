@@ -34,8 +34,8 @@ public class CommandType {
         commands.put("setToApprovedStatus", new CommentApprovalCommand());
         commands.put("setToRejectedStatus", new CommentRejectionCommand());
         commands.put("showUserByStatus", new FindUserByStatus());
-        commands.put("frozeUser", new FrozeUserCommand());
-        commands.put("makeUserActive", new MakeUserActiveCommand());
+        commands.put("frozeUser", new BanUserCommand());
+        commands.put("makeUserActive", new ActivateCommand());
         commands.put("showUserMessages", new FindUserMessageCommand());
         commands.put("deleteMessage", new DeleteMessageCommand());
 

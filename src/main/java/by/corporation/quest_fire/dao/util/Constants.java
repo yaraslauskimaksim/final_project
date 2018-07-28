@@ -26,6 +26,7 @@ public class Constants {
      */
     public static final String BOOKING_ID = "boo_id";
     public static final String BOOKING_USER_ID = "boo_user_id";
+    public static final String BOOKING_QUEST_ID = "boo_quest_id";
     public static final String BOOKING_STATUS = "boo_status";
     public static final String BOOKING_DATE = "boo_date";
     public static final String BOOKING_NUMBER_OF_GUESTS = "boo_number_of_guests";
@@ -40,4 +41,14 @@ public class Constants {
     public static final String USER_FIRSTNAME = "usr_firstname";
     public static final String USER_LASTNAME = "usr_lastname";
     public static final String STATUS = "usr_status";
+
+    /**
+     * These constants are for CommentDAO
+     */
+    public static final String COMMENT_ID = "com_id";
+    public static final String COMMENT_STATUS = "com_status";
+    public static final String COMMENT_QUEST_ID = "com_quest_id";
+    public static final String COMMENT_USER_ID = "com_user_id";
+    public static final String COMMENT_DESCRIPTION = "com_description";
+    public static final String COMMENT_DATE = "com_date";
 }

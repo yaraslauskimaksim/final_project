@@ -37,9 +37,6 @@
    <li class="page-item">
       <c:forEach begin="1" end="${numberOfPages}" var="i">
          <c:choose>
-          <c:when test="$numberOfPages eq 1}">
-             <p>It is greater than 0</p>
-          </c:when>
             <c:when test="${page eq i}">
                <a class="page-link" href="${_contextPath}/frontController?command=showUserBooking&page=${i}" > ${i}</a>
             </c:when>

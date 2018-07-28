@@ -1,31 +1,31 @@
-package by.corporation.quest_fire.entity;
+package by.corporation.quest_fire.entity.dto;
+
+import by.corporation.quest_fire.entity.Quest;
+import by.corporation.quest_fire.entity.Status;
+import by.corporation.quest_fire.entity.User;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Comment implements Serializable {
+public class CommentTO implements Serializable {
 
     private static final long serialVersionUID = -5105680222574964445L;
     private int commentId;
-    private int userId;
-    private int questId;
     private String description;
     private Timestamp time;
     private Status status;
     private Quest quest;
     private User user;
 
-    public Comment() {
+    public CommentTO() {
     }
 
-
-    public Comment(int commentId, int userId, int questId, String description, Status status, Timestamp time) {
+    public CommentTO(int commentId, int userId, int questId, String description, Status status, Timestamp time, User user, Quest quest) {
         this.commentId = commentId;
-        this.userId = userId;
-        this.questId = questId;
         this.description = description;
         this.status = status;
         this.time = time;
+        this.quest = quest;
     }
 
     public void setQuest(Quest quest) {
@@ -68,21 +68,6 @@ public class Comment implements Serializable {
         return description;
     }
 
-    public int getQuestId() {
-        return questId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setQuestId(int questId) {
-        this.questId = questId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     public int getCommentId() {
         return commentId;
@@ -97,7 +82,7 @@ public class Comment implements Serializable {
         if (this == obj) return true;
         if (this == null) return false;
         if (getClass() != obj.getClass()) return false;
-        Comment comment = (Comment) obj;
+        CommentTO comment = (CommentTO) obj;
 
         if (description == null) {
             if (comment.description != null)
@@ -116,9 +101,5 @@ public class Comment implements Serializable {
     public int hashCode() {
         return (int) (31 * ((description == null) ? 0 : description.hashCode()) + ((status == null) ? 0 : status.hashCode()));
     }
-
-    @Override
-    public String toString() {
-        return description;
-    }
 }
+

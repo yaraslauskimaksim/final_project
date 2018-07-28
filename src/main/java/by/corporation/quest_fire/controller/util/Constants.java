@@ -112,16 +112,22 @@ public class Constants {
     public static final String QUEST_ALREADY_EXISTS_MESSGE = "Sorry, but name for yout quest is already in use. Please, try once again, but with another one!";
     public static final String COMMENT_WAS_SENT_MESSAGE = "Your comment is successfully sent. Thank you!";
     public static final String RATING_WAS_SAVED_MESSAGE = "Thank you for your rating!";
-
-
-    /**
-     * These constants are for upload controller
-     */
-
-    public static final String ABSOLUTE_PATH = "E:\\IdeaProjects\\com\\corportion\\quest_fire\\src\\main\\webapp\\static\\img";
-
+    public static final String EMPTY_COMMENT_LIST = "Sorry, but there aren't any comments available!";
     /**
      * These constants are for controller util
      */
     public static final String REFERER = "referer";
+
+    /**
+     * Name of the directory where uploaded files will be saved, relative to
+     * the web application directory.
+     */
+    public static final String SAVE_DIR = "uploadFiles";
+    /**
+     * These constants are for upload controller
+     */
+    public static final String CONTENT_DISPOSITION = "content-disposition";
+    public static final String FILE_NAME = "filename";
+    public static final String EQUAL_SIGN = "=";
+    public static final String EMPTY_STRING = "";
 }

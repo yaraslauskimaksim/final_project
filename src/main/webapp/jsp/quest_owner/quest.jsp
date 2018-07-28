@@ -26,8 +26,8 @@
             <div class="d-flex justify-content-between align-items-center">
                <div class="btn-group">
                    <c:if test="${not empty quests.name}">
-                 <a type="button" class="btn btn-dark" href="${_contextPath}/frontController?command=showSingleQuest&questId=${quests.questId}">View / Edit</a>
-                 <a type="button"class="btn btn-dark"  href ="${_contextPath}/frontController?command=deleteQuest&questId=${quests.questId}">Delete</a>
+                 <a type="button" class="btn btn-dark" href="${_contextPath}/frontController?command=showSingleQuest&questId=${quests.questId}">View / Edit / Delete</a>
+
                 </c:if>
             </div>
         <small class="text-muted"><c:out value="${quests.score}" /></small>
