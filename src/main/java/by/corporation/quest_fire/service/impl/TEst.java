@@ -1,25 +1,14 @@
 package by.corporation.quest_fire.service.impl;
 
 
-import by.corporation.quest_fire.dao.DAOFactory;
-import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
 import by.corporation.quest_fire.dao.exception.DaoException;
-import by.corporation.quest_fire.dao.mysql.CommentDAO;
-import by.corporation.quest_fire.dao.mysql.TransactionManager;
-import by.corporation.quest_fire.dao.pool.ConnectionPool;
-import by.corporation.quest_fire.dao.pool.PooledConnection;
 import by.corporation.quest_fire.dao.util.Constants;
 import by.corporation.quest_fire.entity.Comment;
 import by.corporation.quest_fire.entity.Status;
-import by.corporation.quest_fire.entity.User;
-import by.corporation.quest_fire.util.BundleResourceManager;
-import by.corporation.quest_fire.util.Constant;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class TEst {
     private static final String UPDATE_COMMENT = "UPDATE comment SET com_quest_id = ?, com_user_id = ?, com_description = ?, com_status = ? WHERE com_user_id = ?";

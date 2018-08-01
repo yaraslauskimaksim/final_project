@@ -67,7 +67,7 @@ public class Paginator extends TagSupport {
             }
 
         } catch (IOException e) {
-            throw new JspException("Error in Paginator tag", e);
+            throw new JspException("Error in tag", e);
         }
         return SKIP_BODY;
     }

@@ -34,7 +34,7 @@ public class BookingCommand implements Command {
         Booking booking = formBooking(requestContent);
         try {
             BookingService bookingService = ServiceFactory.getInstance().getBookingService();
-            int bookingId = bookingService.saveBookingDetails(booking);
+            long bookingId = bookingService.saveBookingDetails(booking);
             if (bookingId != 0) {
                 commandResult.putSessionAttribute("bookingId", bookingId);
                 commandResult.putSessionAttribute("success", "your booking is successfully done!");
@@ -61,8 +61,8 @@ public class BookingCommand implements Command {
         Booking booking = new Booking();
         booking.setTimestamp(parseDate(requestContent));
         booking.setNumberOfGuests(Integer.valueOf(requestContent.getRequestParameter(Constants.NUMBER_OF_GUESTS).trim()));
-        booking.setUserId( (Integer) requestContent.getSessionAttribute(Constants.USER_ID));
-        booking.setQuestId((Integer) requestContent.getSessionAttribute(Constants.QUEST_ID));
+        booking.setUserId( (Long) requestContent.getSessionAttribute(Constants.USER_ID));
+        booking.setQuestId((Long) requestContent.getSessionAttribute(Constants.QUEST_ID));
         return booking;
     }
     /**

@@ -1,9 +1,10 @@
 package by.corporation.quest_fire.dao.mysql.impl;
 
+import by.corporation.quest_fire.dao.AbstractDAO;
 import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
 import by.corporation.quest_fire.dao.mysql.QuestDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
-import by.corporation.quest_fire.dao.mysql.TransactionManager;
+import by.corporation.quest_fire.dao.TransactionManager;
 import by.corporation.quest_fire.dao.pool.ConnectionPool;
 import by.corporation.quest_fire.dao.pool.PooledConnection;
 import by.corporation.quest_fire.dao.util.Constants;
@@ -20,7 +21,11 @@ import java.util.List;
 /**
  * This class is for retrieving data connected with quests
  */
-public class QuestDAOImpl implements QuestDAO {
+public class QuestDAOImpl extends AbstractDAO implements QuestDAO {
+
+    public QuestDAOImpl(PooledConnection connection){
+        super(connection);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(QuestDAOImpl.class);
 
@@ -52,11 +57,10 @@ public class QuestDAOImpl implements QuestDAO {
      */
     @Override
     public List<Quest> fetchAllQuests(int questPerPage, int currentPage) throws DaoException {
-        PooledConnection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-            connection = ConnectionPool.getInstance().getConnection();
+            connection = getConnection();
             statement = connection.prepareStatement(SELECT_ALL_QUEST);
             statement.setInt(1, questPerPage);
             int startIndex = (currentPage - 1) * questPerPage;
@@ -154,7 +158,7 @@ public class QuestDAOImpl implements QuestDAO {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Quest quest = new Quest();
-                quest.setQuestId(resultSet.getInt(Constants.QUEST_ID));
+                quest.setId(resultSet.getLong(Constants.QUEST_ID));
                 quest.setName(resultSet.getString(Constants.QUEST_NAME));
                 quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
                 quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
@@ -175,13 +179,13 @@ public class QuestDAOImpl implements QuestDAO {
     }
 
     @Override
-    public void addImage(String image, Integer questId) throws DaoException {
+    public void addImage(String image, long questId) throws DaoException {
         ResultSet resultSet = null;
         String addeImage = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(ADD_IMAGE);) {
             preparedStatement.setString(1, image);
-            preparedStatement.setInt(2, questId);
+            preparedStatement.setLong(2, questId);
             preparedStatement.executeUpdate();
 
 
@@ -232,7 +236,7 @@ public class QuestDAOImpl implements QuestDAO {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Quest quest = new Quest();
-                quest.setQuestId(resultSet.getInt(Constants.QUEST_ID));
+                quest.setId(resultSet.getInt(Constants.QUEST_ID));
                 quest.setName(resultSet.getString(Constants.QUEST_NAME));
                 quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
                 quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));
@@ -262,14 +266,14 @@ public class QuestDAOImpl implements QuestDAO {
      * @throws DaoException the dao exception
      */
     @Override
-    public Quest fetchSingleQuest(int questId) throws DaoException {
+    public Quest fetchSingleQuest(long questId) throws DaoException {
         PooledConnection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             connection = ConnectionPool.getInstance().getConnection();
             preparedStatement = connection.prepareStatement(SELECT_SINGLE_QUEST);
-            preparedStatement.setInt(1, questId);
+            preparedStatement.setLong(1, questId);
             resultSet = preparedStatement.executeQuery();
             Quest quest = formQuest(resultSet);
             return quest;
@@ -293,15 +297,15 @@ public class QuestDAOImpl implements QuestDAO {
      * @throws DaoException the dao exception
      */
     @Override
-    public int fetchScoreQuest(int questId) throws DaoException {
+    public double fetchScoreQuest(long questId) throws DaoException {
         PooledConnection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        int score = 0;
+        double score = 0;
         try {
             connection = ConnectionPool.getInstance().getConnection();
             preparedStatement = connection.prepareStatement(SELECT_QUEST_SCORE);
-            preparedStatement.setInt(1, questId);
+            preparedStatement.setLong(1, questId);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Quest quest = new Quest();
@@ -329,10 +333,10 @@ public class QuestDAOImpl implements QuestDAO {
      * @throws DaoException the dao exception
      */
     @Override
-    public void updateScore(int score, int questId) throws DaoException {
+    public void updateScore(double score, int questId) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SCORE);) {
-            preparedStatement.setInt(1, score);
+            preparedStatement.setDouble(1, score);
             preparedStatement.setInt(2, questId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -349,7 +353,7 @@ public class QuestDAOImpl implements QuestDAO {
      * @throws DaoException the dao exception
      */
     @Override
-    public void deleteQuest(int questId) throws DaoException {
+    public void deleteQuest(long questId) throws DaoException {
         ResultSet resultSet = null;
         PooledConnection connection = null;
         PreparedStatement statement1 = null;
@@ -358,12 +362,12 @@ public class QuestDAOImpl implements QuestDAO {
         try { connection = ConnectionPool.getInstance().getConnection();
              statement1 = connection.prepareStatement(DELETE_COMMENT);
              statement2 = connection.prepareStatement(DELETE_QUEST);
-            transactionManager = new TransactionManager();
+            transactionManager = new TransactionManager(connection);
             transactionManager.startTransaction();
-            statement1.setInt(1, questId);
+            statement1.setLong(1, questId);
             statement1.executeUpdate();
 
-            statement2.setInt(1, questId);
+            statement2.setLong(1, questId);
             statement2.executeUpdate();
 
             transactionManager.commit();
@@ -384,7 +388,7 @@ public class QuestDAOImpl implements QuestDAO {
             preparedStatement.setString(1, quest.getGenre());
             preparedStatement.setString(2, quest.getName());
             preparedStatement.setString(3, quest.getDescription());
-            preparedStatement.setInt(4, quest.getQuestId());
+            preparedStatement.setLong(4, quest.getId());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -409,7 +413,7 @@ public class QuestDAOImpl implements QuestDAO {
             preparedStatement.setString(1, quest.getGenre());
             preparedStatement.setString(2, quest.getName());
             preparedStatement.setString(3, quest.getDescription());
-            preparedStatement.setInt(4, quest.getUserId());
+            preparedStatement.setLong(4, quest.getUserId());
             preparedStatement.setString(5, quest.getQuestRoomName());
             preparedStatement.executeUpdate();
 
@@ -460,7 +464,7 @@ public class QuestDAOImpl implements QuestDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 while (resultSet.next()) {
                     Quest quest = new Quest();
-                    quest.setQuestId(resultSet.getInt("que_id"));
+                    quest.setId(resultSet.getInt("que_id"));
                     quest.setGenre(resultSet.getString("que_genre"));
                     quest.setName(resultSet.getString("que_name"));
                     quest.setDescription(resultSet.getString("que_description"));
@@ -478,7 +482,7 @@ public class QuestDAOImpl implements QuestDAO {
     }
 
     @Override
-    public String getQuestRoomName(int userId) throws DaoException {
+    public String getQuestRoomName(long userId) throws DaoException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -486,7 +490,7 @@ public class QuestDAOImpl implements QuestDAO {
         try {
             connection = ConnectionPool.getInstance().getConnection();
             preparedStatement = connection.prepareStatement(SELECT_QUEST_ROOM_NAME);
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setLong(1, userId);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 name = resultSet.getString(Constants.QUEST_ROOM_NAME);
@@ -509,9 +513,9 @@ public class QuestDAOImpl implements QuestDAO {
         statement.setString(2, quest.getGenre());
         statement.setString(3, quest.getDescription());
         statement.setString(4, quest.getImage());
-        statement.setInt(5, quest.getScore());
+        statement.setDouble(5, quest.getScore());
         statement.setString(6, quest.getQuestRoomName());
-        statement.setInt(7, quest.getQuestId());
+        statement.setLong(7, quest.getId());
         statement.executeUpdate();
     }
 
@@ -519,7 +523,7 @@ public class QuestDAOImpl implements QuestDAO {
         List<Quest> quests = new ArrayList<>();
         while (resultSet.next()) {
             Quest quest = new Quest();
-            quest.setQuestId(resultSet.getInt(Constants.QUEST_ID));
+            quest.setId(resultSet.getInt(Constants.QUEST_ID));
             quest.setName(resultSet.getString(Constants.QUEST_NAME));
             quest.setDescription(resultSet.getString(Constants.QUEST_DESCRIPTION));
             quest.setGenre(resultSet.getString(Constants.QUEST_GENRE));

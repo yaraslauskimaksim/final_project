@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentTO> fetchAllCommentsByQuestId(int questId) throws ServiceException {
+    public List<CommentTO> fetchAllCommentsByQuestId(long questId) throws ServiceException {
         List<CommentTO> comments = null;
         try {
             comments = commentDAO.fetchAllById(questId);

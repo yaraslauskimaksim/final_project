@@ -1,5 +1,6 @@
 package by.corporation.quest_fire.dao.mysql.impl;
 
+import by.corporation.quest_fire.dao.AbstractDAO;
 import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
 import by.corporation.quest_fire.dao.mysql.CommentDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
@@ -21,7 +22,11 @@ import java.util.List;
 /**
  * This class is for retrieving data connected with comments
  */
-public class CommentDAOImpl implements CommentDAO {
+public class CommentDAOImpl extends AbstractDAO implements CommentDAO {
+
+    public CommentDAOImpl(PooledConnection connection) {
+        super(connection);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(CommentDAOImpl.class);
 
@@ -32,6 +37,8 @@ public class CommentDAOImpl implements CommentDAO {
     private static final String SELECT_ALL_COMMENTS_BY_QUEST_ID = "SELECT com_id, com_quest_id, com_user_id, com_description, com_status, que_name, usr_firstname, usr_lastname from comment left join quest on quest.que_id = comment.com_quest_id left join user on user.usr_id = comment.com_user_id where com_status = 'approved' and que_id = ?";
     private static final String UPDATE_COMMENT = "UPDATE comment SET com_user_id = ?, com_quest_id = ?, com_status = ?, com_description = ?, com_date = ?  WHERE com_id = ?";
     private static final String SELECT_ALL_COMMENTS_BY_USER_ID = "SELECT com_id, com_quest_id, com_user_id, com_description, com_status, com_date from comment WHERE com_user_id = ?";
+
+
 
 
     @Override
@@ -54,6 +61,26 @@ public class CommentDAOImpl implements CommentDAO {
             try {
                 ConnectionPool.getInstance().closeStatement(preparedStatement);
                 ConnectionPool.getInstance().closeConnectionPool();
+            } catch (SQLException | ConnectionPoolException e) {
+                LOGGER.warn("Exception during closing DB resources.", e);
+            }
+        }
+    }
+
+    @Override
+    public void update(List<Comment> comments) throws DaoException {
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = getConnection();
+            preparedStatement = connection.prepareStatement(UPDATE_COMMENT);
+           formUpdatedComments(preparedStatement, comments);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException("Exception occurs during set status to be approved", e);
+        } finally {
+            try {
+                ConnectionPool.getInstance().closeStatement(preparedStatement);
+                ConnectionPool.getInstance().releaseConnection(connection);
             } catch (SQLException | ConnectionPoolException e) {
                 LOGGER.warn("Exception during closing DB resources.", e);
             }
@@ -155,7 +182,7 @@ public class CommentDAOImpl implements CommentDAO {
             while (resultSet.next()) {
                 Quest quest = new Quest();
                 quest.setName(resultSet.getString(Constants.QUEST_NAME));
-                quest.setQuestId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
+                quest.setId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
 
                 User user = new User();
                 user.setFirstName(resultSet.getString(Constants.USER_FIRSTNAME));
@@ -209,14 +236,14 @@ public class CommentDAOImpl implements CommentDAO {
     }
 
     @Override
-    public List<CommentTO> fetchAllById(int questId) throws DaoException {
+    public List<CommentTO> fetchAllById(long questId) throws DaoException {
         PooledConnection connection = null;
         ResultSet resultSet = null;
         PreparedStatement statement = null;
         try {
             connection = ConnectionPool.getInstance().getConnection();
             statement = connection.prepareStatement(SELECT_ALL_COMMENTS_BY_QUEST_ID);
-            statement.setInt(1, questId);
+            statement.setLong(1, questId);
             resultSet = statement.executeQuery();
             List<CommentTO> comments = new ArrayList<>();
             while (resultSet.next()) {
@@ -226,7 +253,7 @@ public class CommentDAOImpl implements CommentDAO {
                 user.setId(resultSet.getInt(Constants.COMMENT_USER_ID));
                 Quest quest = new Quest();
                 quest.setName(resultSet.getString(Constants.QUEST_NAME));
-                quest.setQuestId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
+                quest.setId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
                 CommentTO comment = new CommentTO();
                 comment.setUser(user);
                 comment.setQuest(quest);
@@ -250,14 +277,14 @@ public class CommentDAOImpl implements CommentDAO {
     }
 
     @Override
-    public List<Comment> fetchAllByUserId(int userId) throws DaoException {
+    public List<Comment> fetchAllByUserId(long userId) throws DaoException {
         PooledConnection connection = null;
         ResultSet resultSet = null;
         PreparedStatement statement = null;
         try {
             connection = ConnectionPool.getInstance().getConnection();
             statement = connection.prepareStatement(SELECT_ALL_COMMENTS_BY_USER_ID);
-            statement.setInt(1, userId);
+            statement.setLong(1, userId);
             resultSet = statement.executeQuery();
             List<Comment> comments = formCommentByUserId(resultSet);
             return comments;
@@ -282,7 +309,7 @@ public class CommentDAOImpl implements CommentDAO {
             user.setId(resultSet.getInt(Constants.COMMENT_USER_ID));
             Quest quest = new Quest();
             quest.setName(resultSet.getString(Constants.QUEST_NAME));
-            quest.setQuestId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
+            quest.setId(resultSet.getInt(Constants.COMMENT_QUEST_ID));
             CommentTO comment = new CommentTO();
             comment.setUser(user);
             comment.setQuest(quest);
@@ -322,5 +349,24 @@ public class CommentDAOImpl implements CommentDAO {
         preparedStatement.setString(3, comment.getDescription());
         preparedStatement.setTimestamp(4, comment.getTime());
         preparedStatement.executeUpdate();
+    }
+
+    /**
+     * The method is used in 'create' method and gets
+     * @param statement and
+     * @param comments for updating all comments.
+     * @throws {@link SQLException}.
+     */
+    private void formUpdatedComments(PreparedStatement statement, List<Comment> comments) throws SQLException {
+        for (Comment comment : comments) {
+            statement.setInt(1, comment.getQuestId());
+            statement.setInt(2, comment.getUserId());
+            statement.setString(3, comment.getDescription());
+            statement.setString(4, String.valueOf(comment.getStatus()).toLowerCase());
+            statement.setTimestamp(5, comment.getTime());
+            statement.setInt(6, comment.getCommentId());
+            statement.addBatch();
+        }
+        statement.executeBatch();
     }
 }

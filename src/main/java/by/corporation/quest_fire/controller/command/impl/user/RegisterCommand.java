@@ -38,7 +38,7 @@ public class RegisterCommand implements Command {
         User user = formUser(requestContent);
         try {
             UserService userService = ServiceFactory.getInstance().getUserService();
-            int userID = userService.register(user);
+            long userID = userService.register(user);
             commandResult.putSessionAttribute(Constants.USER_ID, userID);
             commandResult.putSessionAttribute(Constants.USER, user);
             commandResult.putSessionAttribute(Constants.ROLE, Role.CLIENT);

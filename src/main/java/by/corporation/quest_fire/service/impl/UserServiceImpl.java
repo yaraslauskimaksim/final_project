@@ -1,12 +1,13 @@
 package by.corporation.quest_fire.service.impl;
 
 
-import by.corporation.quest_fire.controller.command.CommandResult;
 import by.corporation.quest_fire.dao.DAOFactory;
 import by.corporation.quest_fire.dao.mysql.CommentDAO;
-import by.corporation.quest_fire.dao.mysql.TransactionManager;
+import by.corporation.quest_fire.dao.TransactionManager;
 import by.corporation.quest_fire.dao.mysql.UserDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
+import by.corporation.quest_fire.dao.pool.ConnectionPool;
+import by.corporation.quest_fire.dao.pool.PooledConnection;
 import by.corporation.quest_fire.entity.Comment;
 import by.corporation.quest_fire.entity.Status;
 import by.corporation.quest_fire.entity.User;
@@ -28,13 +29,13 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
+
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     private static UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     private static CommentDAO commentDAO = DAOFactory.getInstance().getCommentDAO();
 
 
-    TransactionManager transactionManager = new TransactionManager();
     /**
      * The method returns the {@link User} who provides {@code email}
      * and {@code password}. Returns {@code null} if user is not found.
@@ -44,14 +45,13 @@ public class UserServiceImpl implements UserService {
      * @throws ValidationException if user tries to send empty fields
      * @throws ServiceException    the service exception
      */
-
     public User fetchUser(User user) throws ServiceException, ValidationException {
         try {
             if (!Validator.validateEmptyFields(user.getEmail(), user.getPassword())) {
                 throw new ValidationException("Sent data is not correct");
             }
             String hashedPassword = PasswordHash.hash(user.getPassword());
-            user = userDAO.fetchUser(user.getEmail(), hashedPassword);
+            user = userDAO.fetchUserByEmailPassword(user.getEmail(), hashedPassword);
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during retrieving user", e);
         }
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserAlreadyExistException if user already exists
      * @throws ServiceException          the service exception
      */
-    public int register(User user) throws ServiceException, ValidationException, UserAlreadyExistException {
+    public long register(User user) throws ServiceException, ValidationException, UserAlreadyExistException {
         if (fetchUserId(user) != 0) {
             throw new UserAlreadyExistException("User already exists");
         }
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Invalid data is sent");
         }
         try {
-            int userID = userDAO.registerUser(user);
+            long userID = userDAO.create(user);
             return userID;
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during saving a new user on service layer", e);
@@ -86,8 +86,8 @@ public class UserServiceImpl implements UserService {
      * @param user(email)
      * @throws ServiceException the service exception
      */
-    private int fetchUserId(User user) throws ServiceException {
-        Integer userId = 0;
+    private long fetchUserId(User user) throws ServiceException {
+        long userId = 0;
         try {
             userId = userDAO.fetchUserId(user);
         } catch (DaoException e) {
@@ -105,24 +105,16 @@ public class UserServiceImpl implements UserService {
      * @throws DaoException if {@link SQLException} happens.
      */
     @Override
-    public void makeUserActive(int userId) throws ServiceException {
+    public void makeUserActive(long userId) throws ServiceException {
+        TransactionManager transactionManager = new TransactionManager(ConnectionPool.getInstance().getConnection());
         try {
             User user = userDAO.fetchById(userId);
             Status status = user.getStatus();
-            List<Comment> comments = enableComments(userId);
-            if (status.equals(Status.FROZEN)) {
-                user.setStatus(Status.ACTIVE);
-                transactionManager.startTransaction();
-                userDAO.update(user, comments);
-                transactionManager.commit();
-            } else {
-                LOGGER.log(Level.WARN, "Status should be 'frozen'");
-            }
+            doUserActiveTransaction(status, user, transactionManager, userId);
         } catch (DaoException e) {
             transactionManager.rollback();
             throw new ServiceException("Exception occurs during setting status on service layer", e);
-        }
-        finally {
+        } finally {
             transactionManager.stopTransaction();
         }
     }
@@ -137,37 +129,28 @@ public class UserServiceImpl implements UserService {
      * @throws DaoException if {@link SQLException} happens.
      */
     @Override
-    public void frozeUser(int userId) throws ServiceException {
+    public void frozeUser(long userId) throws ServiceException {
+        TransactionManager transactionManager = new TransactionManager(ConnectionPool.getInstance().getConnection());
         try {
             User user = userDAO.fetchById(userId);
             Status status = user.getStatus();
-            List<Comment> comments = disableComments(userId);
-            if (status.equals(Status.ACTIVE)) {
-                user.setStatus(Status.FROZEN);
-                transactionManager.startTransaction();
-                userDAO.update(user, comments);
-                transactionManager.commit();
-            } else {
-                LOGGER.log(Level.WARN, "Status should be 'active'");
-            }
+            doUserFrozenTransaction(status, user, transactionManager, userId);
         } catch (DaoException e) {
-                transactionManager.rollback();
-                throw new ServiceException("Exception occurs during setting status on service layer", e);
-        }
-        finally {
+            transactionManager.rollback();
+            throw new ServiceException("Exception occurs during setting status on service layer", e);
+        } finally {
             transactionManager.stopTransaction();
         }
     }
 
 
     @Override
-    public List<User> fetchUsersByStatus(Status status, int currentPage) {
+    public List<User> fetchUsersByStatus(Status status, int currentPage) throws ServiceException {
         List<User> userList = null;
         try {
             userList = userDAO.getAllUsersWithStatus(status, currentPage, Constant.ITEMS_PER_PAGE);
-
         } catch (DaoException e) {
-            e.printStackTrace();
+            throw new ServiceException("Exception happens during retrieving data of users filtered by status");
         }
         return userList;
     }
@@ -190,7 +173,7 @@ public class UserServiceImpl implements UserService {
      *
      * @throws DaoException if {@link SQLException} happens.
      */
-    private List<Comment> enableComments(int userId) throws DaoException {
+    private List<Comment> enableComments(long userId) throws DaoException {
         List<Comment> comments = commentDAO.fetchAllByUserId(userId);
         List<Comment> updatedStatus = new ArrayList<>();
         for (Comment comment : comments) {
@@ -198,7 +181,7 @@ public class UserServiceImpl implements UserService {
                 comment.setStatus(Status.APPROVED);
                 updatedStatus.add(comment);
             }
-            if(comment.getStatus().equals(Status.FROZEN_PENDING)){
+            if (comment.getStatus().equals(Status.FROZEN_PENDING)) {
                 comment.setStatus(Status.PENDING);
                 updatedStatus.add(comment);
             }
@@ -211,7 +194,7 @@ public class UserServiceImpl implements UserService {
      *
      * @throws DaoException if {@link SQLException} happens.
      */
-    private List<Comment> disableComments(int userId) throws DaoException {
+    private List<Comment> disableComments(long userId) throws DaoException {
         List<Comment> comments = commentDAO.fetchAllByUserId(userId);
         List<Comment> updatedStatus = new ArrayList<>();
         for (Comment comment : comments) {
@@ -225,6 +208,31 @@ public class UserServiceImpl implements UserService {
             }
         }
         return updatedStatus;
+    }
+
+    private void doUserActiveTransaction(Status status, User user, TransactionManager transactionManager, long userId) throws DaoException {
+        if (status.equals(Status.FROZEN)) {
+            user.setStatus(Status.ACTIVE);
+            List<Comment> comments = enableComments(userId);
+            transactionManager.startTransaction();
+            userDAO.update(user, comments);
+            commentDAO.update(comments);
+            transactionManager.commit();
+        } else {
+            LOGGER.log(Level.WARN, "Status should be 'frozen'");
+        }
+    }
+
+    private void doUserFrozenTransaction(Status status, User user, TransactionManager transactionManager, long userId) throws DaoException {
+        if (status.equals(Status.ACTIVE)) {
+            user.setStatus(Status.FROZEN);
+            List<Comment> comments = disableComments(userId);
+            transactionManager.startTransaction();
+            userDAO.update(user, comments);
+            transactionManager.commit();
+        } else {
+            LOGGER.log(Level.WARN, "Status should be 'active'");
+        }
     }
 }
 

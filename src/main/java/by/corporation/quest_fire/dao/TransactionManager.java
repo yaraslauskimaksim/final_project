@@ -1,6 +1,5 @@
-package by.corporation.quest_fire.dao.mysql;
+package by.corporation.quest_fire.dao;
 
-import by.corporation.quest_fire.dao.pool.ConnectionPool;
 import by.corporation.quest_fire.dao.pool.PooledConnection;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -10,8 +9,14 @@ import java.sql.SQLException;
 
 public class TransactionManager {
 
+    private PooledConnection connection;
+
+    public TransactionManager(PooledConnection connection){
+        this.connection = connection;
+    }
+
     private static final Logger LOGGER = LogManager.getLogger(TransactionManager.class);
-    private PooledConnection connection = ConnectionPool.getInstance().getConnection();
+
 
     public void startTransaction()  {
         try {

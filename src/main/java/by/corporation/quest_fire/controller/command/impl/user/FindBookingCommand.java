@@ -25,7 +25,7 @@ public class FindBookingCommand implements Command {
     @Override
     public CommandResult execute(RequestContent requestContent) {
         CommandResult commandResult = new CommandResult(FORWARD, requestContent.getReferer());
-        Integer userId = (Integer) requestContent.getSessionAttribute(Constants.USER_ID);
+        Long userId = (Long) requestContent.getSessionAttribute(Constants.USER_ID);
         try {
             BookingService bookingService = ServiceFactory.getInstance().getBookingService();
             List<BookingTO> bookingList = bookingService.findSingleUserBooking(userId);

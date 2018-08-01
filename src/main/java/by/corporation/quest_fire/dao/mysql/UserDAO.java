@@ -9,11 +9,11 @@ import java.util.List;
 
 
 public interface UserDAO {
-    User fetchUser(String email, String password) throws DaoException;
+    User fetchUserByEmailPassword(String email, String password) throws DaoException;
 
-    int registerUser(User user) throws DaoException;
+    long create(User user) throws DaoException;
 
-    int fetchUserId(User user) throws DaoException;
+    long fetchUserId(User user) throws DaoException;
 
 
     List<User> getAllUsersWithStatus(Status status, int currentPage, int usersPerPage) throws DaoException;
@@ -22,7 +22,7 @@ public interface UserDAO {
 
     void update(User user, List<Comment> comments) throws DaoException;
 
-    User fetchById(int userId) throws DaoException;
+    User fetchById(long userId) throws DaoException;
 
 }
 

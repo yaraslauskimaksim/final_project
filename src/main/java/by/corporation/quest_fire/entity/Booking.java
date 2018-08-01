@@ -4,21 +4,19 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 
-public class Booking implements Serializable {
+public class Booking extends Entity implements Serializable {
 
-    private int bookingId;
     private int numberOfGuests;
     private Status status;
-    private int userId;
-    private int questId;
+    private long userId;
+    private long questId;
     private Timestamp timestamp;
-
 
 
     public Booking(){}
 
-    public Booking( int bookingId, Timestamp timestamp, int numberOfGuests, Status status, int userId, int questId){
-        this.bookingId=bookingId;
+    public Booking( int bookingId, Timestamp timestamp, int numberOfGuests, Status status, long userId, long questId){
+        super(bookingId);
         this.timestamp=timestamp;
         this.numberOfGuests=numberOfGuests;
         this.status=status;
@@ -26,15 +24,16 @@ public class Booking implements Serializable {
         this.questId =questId;
     }
 
-    public int getBookingId() {
-        return bookingId;
+
+    @Override
+    public long getId() {
+        return super.getId();
     }
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
+    @Override
+    public void setId(long id) {
+        super.setId(id);
     }
-
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -51,19 +50,19 @@ public class Booking implements Serializable {
         this.status = status;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public int getQuestId() {
+    public long getQuestId() {
         return questId;
     }
 
-    public void setUserId(int userId) {
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public void setQuestId(int questId) {
+    public void setQuestId(long questId) {
         this.questId = questId;
     }
 

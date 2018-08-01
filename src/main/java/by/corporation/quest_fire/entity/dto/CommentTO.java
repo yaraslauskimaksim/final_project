@@ -1,5 +1,6 @@
 package by.corporation.quest_fire.entity.dto;
 
+import by.corporation.quest_fire.entity.Entity;
 import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.entity.Status;
 import by.corporation.quest_fire.entity.User;
@@ -7,7 +8,7 @@ import by.corporation.quest_fire.entity.User;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class CommentTO implements Serializable {
+public class CommentTO extends Entity implements Serializable {
 
     private static final long serialVersionUID = -5105680222574964445L;
     private int commentId;

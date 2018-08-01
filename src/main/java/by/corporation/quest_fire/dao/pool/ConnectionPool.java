@@ -56,7 +56,7 @@ public final class ConnectionPool {
     private void register() {
         poolSize = Integer.parseInt(BundleResourceManager.getDatabasegProperty(Constant.POOL_INITIAL_SIZE));
         try {
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
         } catch (SQLException e) {
             LOGGER.fatal("Couldn't register driver", e);
             throw new RuntimeException("Couldn't register driver", e);

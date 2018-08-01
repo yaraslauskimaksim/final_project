@@ -4,6 +4,7 @@ import by.corporation.quest_fire.controller.command.impl.*;
 import by.corporation.quest_fire.controller.command.impl.administrator.*;
 import by.corporation.quest_fire.controller.command.impl.quest_owner.*;
 import by.corporation.quest_fire.controller.command.impl.user.*;
+import by.corporation.quest_fire.service.ServiceFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class CommandType {
         commands.put("login", new LoginCommand());
         commands.put("logout", new LogoutCommand());
         commands.put("register", new RegisterCommand());
-        commands.put("quest", new FindAllQuestCommand());
+        commands.put("quest", new FindAllQuestCommand(ServiceFactory.getInstance().getQuestService()));
         commands.put("singleQuest", new FindSingleQuestCommand());
         commands.put("showQuestByRating", new FindQuestsByRatingCommand());
         commands.put("search", new SearchCommand());

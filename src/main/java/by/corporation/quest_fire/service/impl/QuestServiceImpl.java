@@ -9,8 +9,6 @@ import by.corporation.quest_fire.service.QuestService;
 import by.corporation.quest_fire.service.exception.QuestAlreadyExistException;
 import by.corporation.quest_fire.service.exception.ServiceException;
 import by.corporation.quest_fire.util.Constant;
-
-
 import java.util.List;
 
 public class QuestServiceImpl implements QuestService {
@@ -18,10 +16,11 @@ public class QuestServiceImpl implements QuestService {
     private static final QuestDAO questDAO = DAOFactory.getInstance().getQuestDAO();
 
     /**
-     * The method returns the collection of {@link Quest}
+     * The method returns the collection of {@link Quest} and
+     * count average score
      *
      * @param currentPage is for pagination
-     * @throws ServiceException the service exception
+     * @throws ServiceException if {@link DaoException} happens
      */
     @Override
     public List<Quest> fetchAllQuests(int currentPage) throws ServiceException {
@@ -34,8 +33,10 @@ public class QuestServiceImpl implements QuestService {
         return quests;
     }
 
+
     /**
      * The method returns the collection of {@link Quest} accordingly to the filled in
+     *
      * @param questName
      * @throws ServiceException the service exception
      */
@@ -52,7 +53,7 @@ public class QuestServiceImpl implements QuestService {
     }
 
     @Override
-    public void addImage(String image, Integer questId) throws ServiceException {
+    public void addImage(String image, long questId) throws ServiceException {
         try {
             questDAO.addImage(image, questId);
         } catch (DaoException e) {
@@ -62,7 +63,7 @@ public class QuestServiceImpl implements QuestService {
 
 
     @Override
-    public Quest fetchSingleQuest(Integer questId) throws ServiceException {
+    public Quest fetchSingleQuest(long questId) throws ServiceException {
         Quest singleQuest = null;
         try {
             singleQuest = questDAO.fetchSingleQuest(questId);
@@ -75,36 +76,40 @@ public class QuestServiceImpl implements QuestService {
 
     /**
      * The method update the score for the {@link Quest}
+     *
      * @param questId is for what quest
      * @throws ServiceException the service exception
      */
     @Override
-    public void updateScore(int questId) throws ServiceException {
+    public void updateScore(long questId) throws ServiceException {
         try {
             Quest quest = questDAO.fetchSingleQuest(questId);
-            int newScore = fetchQuestScore(quest.getQuestId(), quest.getScore());
+            double newScore = fetchQuestScore(quest.getId(), quest.getScore());
             quest.setScore(newScore);
             questDAO.update(quest);
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during updating score of the quest", e);
         }
     }
+
     /**
      * The method delete the {@link Quest}
+     *
      * @param questId is for verifying which quest needs to be deleted
      * @throws ServiceException
      */
     @Override
-    public void deleteQuest(int questId) throws ServiceException {
+    public void deleteQuest(long questId) throws ServiceException {
         try {
             questDAO.deleteQuest(questId);
         } catch (DaoException e) {
-           throw new ServiceException("Exception occurs during quest deleting", e);
+            throw new ServiceException("Exception occurs during quest deleting", e);
         }
     }
+
     /**
      * @param quest is for updating the quest
-     * @throws ServiceException the service exception
+     * @throws ServiceException           the service exception
      * @throws QuestAlreadyExistException if quest with such name already exists
      */
     @Override
@@ -112,26 +117,28 @@ public class QuestServiceImpl implements QuestService {
         try {
             if (!isQuestExists(quest)) {
                 questDAO.updateQuest(quest);
-            }else {
+            } else {
                 throw new QuestAlreadyExistException("Quest already exists");
             }
         } catch (DaoException e) {
             throw new ServiceException("Exception during updating quest", e);
         }
     }
+
     /**
      * The method returns the auto generated id for a new quest
+     *
      * @param quest is for creating a new quest
-     * @throws ServiceException the service exception
+     * @throws ServiceException           the service exception
      * @throws QuestAlreadyExistException if quest with such name already exists
      */
     @Override
-    public Integer addQuest(Quest quest) throws ServiceException,QuestAlreadyExistException {
+    public Integer addQuest(Quest quest) throws ServiceException, QuestAlreadyExistException {
         int questId = 0;
         try {
             if (!isQuestExists(quest)) {
                 questId = questDAO.addQuest(quest);
-            }else {
+            } else {
                 throw new QuestAlreadyExistException("Quest already exists");
             }
             return questId;
@@ -141,7 +148,7 @@ public class QuestServiceImpl implements QuestService {
     }
 
     @Override
-    public List<Quest> findAllQuestsByQuestRoom(int userId, int currentPage) throws ServiceException {
+    public List<Quest> findAllQuestsByQuestRoom(long userId, int currentPage) throws ServiceException {
         String questRoomName = findQuestRoomName(userId);
         List<Quest> quests = null;
         try {
@@ -163,14 +170,13 @@ public class QuestServiceImpl implements QuestService {
         List<Quest> quests = null;
         try {
             quests = questDAO.fetchAllQuestByRating(Constant.ITEMS_PER_PAGE, currentPage);
-
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during retrieving quests according to the rating ", e);
         }
         return quests;
     }
 
-    public String findQuestRoomName(int userId) throws ServiceException {
+    public String findQuestRoomName(long userId) throws ServiceException {
         String name = null;
         try {
             name = questDAO.getQuestRoomName(userId);
@@ -194,7 +200,7 @@ public class QuestServiceImpl implements QuestService {
 
 
     @Override
-    public int fetchNumberOfPagesByQuestRoomName(int userId) throws ServiceException {
+    public int fetchNumberOfPagesByQuestRoomName(long userId) throws ServiceException {
         String questRoomName = null;
         int numberOfPages = 0;
         try {
@@ -231,27 +237,31 @@ public class QuestServiceImpl implements QuestService {
      * or returns false if not.
      */
     private boolean isQuestExists(Quest quest) throws DaoException {
-        Quest quest1 = questDAO.fetchSingleQuest(quest.getQuestId());
+        Quest quest1 = questDAO.fetchSingleQuest(quest.getId());
         boolean isQuestExists = questDAO.isQuestExists(quest);
         return isQuestExists && !(quest1.getName().equalsIgnoreCase(quest.getName()));
     }
 
     /**
      * The method returns the score of the quest and adds the new score to it
+     *
      * @param questId is for what quest
-     * @param score is new score
+     * @param score   is new score
      * @throws ServiceException the service exception
      */
 
-    private int fetchQuestScore(int questId, int score) throws ServiceException {
-        int newScore = 0;
+    private double fetchQuestScore(long questId, double score) throws ServiceException {
+        double result = 0;
         try {
-            newScore = questDAO.fetchScoreQuest(questId);
+            double total = questDAO.fetchScoreQuest(questId) + score;
+            result = Math.round((total * 5) / 100);
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during updating the score", e);
         }
-        return score + newScore;
+        return result;
     }
+
+
 
 }
 

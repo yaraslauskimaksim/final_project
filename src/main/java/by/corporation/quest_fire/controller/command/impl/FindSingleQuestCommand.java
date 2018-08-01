@@ -33,9 +33,8 @@ public class FindSingleQuestCommand implements Command {
     public CommandResult execute(RequestContent requestContent) {
         CommandResult commandResult = new CommandResult(FORWARD, requestContent.getReferer());
 
-        Integer questId = Integer.parseInt(requestContent.getRequestParameter(Constants.QUEST_ID).trim());
+        Long questId = Long.parseLong(requestContent.getRequestParameter(Constants.QUEST_ID).trim());
 
-        verifyQuestId(questId, commandResult);
         Quest singleQuest = null;
         try {
             QuestService questService = ServiceFactory.getInstance().getQuestService();
@@ -55,15 +54,5 @@ public class FindSingleQuestCommand implements Command {
         }
         return commandResult;
     }
-    /**
-     * This method is for verifying whether
-     * @param questId empty or not.
-     * If there is no quest id, user is redirected to error page
-     */
-    private void verifyQuestId(Integer questId, CommandResult commandResult){
-        if(questId == null || questId == 0){
-            LOGGER.error("No Quest Id");
-            commandResult.setPage(BundleResourceManager.getConfigProperty(Constants.ERROR_503));
-        }
-    }
+
 }

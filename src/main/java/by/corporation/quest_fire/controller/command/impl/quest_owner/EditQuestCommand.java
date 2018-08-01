@@ -52,7 +52,7 @@ public class EditQuestCommand implements Command {
         quest.setDescription(requestContent.getRequestParameter(Constants.QUEST_DESCRIPTION));
         quest.setName(requestContent.getRequestParameter(Constants.QUEST_NAME));
         quest.setGenre(requestContent.getRequestParameter(Constants.QUEST_GENRE));
-        quest.setQuestId((Integer) requestContent.getSessionAttribute(Constants.QUEST_ID));
+        quest.setId((Integer) requestContent.getSessionAttribute(Constants.QUEST_ID));
         return quest;
     }
 }

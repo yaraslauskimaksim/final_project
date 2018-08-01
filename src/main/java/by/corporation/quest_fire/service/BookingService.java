@@ -8,12 +8,20 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface BookingService {
+
     int saveBookingDetails(Booking booking) throws ServiceException;
+
     List<BookingTO> fetchAllUserBooking(String questRoomName, int currentPage) throws ServiceException;
-    List<BookingTO> findSingleUserBooking(int userId) throws ServiceException;
-    void approveStatus(int bookingId) throws ServiceException;
-    void rejectStatus(int bookingId) throws ServiceException;
+
+    List<BookingTO> findSingleUserBooking(long userId) throws ServiceException;
+
+    void approveStatus(long bookingId) throws ServiceException;
+
+    void rejectStatus(long bookingId) throws ServiceException;
+
     int fetchNumberOfPagesByQuestRoom(String questRoomName);
+
     int fetchNumberOfPages(int userId) throws ServiceException;
-    List<Timestamp> fetchFilteredBookedDateByCurrentTime(int questId) throws ServiceException;
+
+    List<Timestamp> fetchFilteredBookedDateByCurrentTime(long questId) throws ServiceException;
 }

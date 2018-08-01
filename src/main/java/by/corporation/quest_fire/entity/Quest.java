@@ -2,27 +2,23 @@ package by.corporation.quest_fire.entity;
 
 import java.io.Serializable;
 
-public class Quest implements Serializable {
+public class Quest extends Entity implements Serializable {
 
     private static final long serialVersionUID = -4880227423370898268L;
-    private int questId;
-    private int userId;
+    private long userId;
     private String genre;
     private String name;
     private String description;
     private String image;
-    private int score;
+    private double score;
     private String questRoomName;
 
     public Quest() {
     }
 
-    public Quest(int questId){
-        this.questId = questId;
-    }
 
-    public Quest(int questId, String genre, String name, String description, String image, int score, int userId, String questRoomName) {
-        this.questId = questId;
+    public Quest(long questId, String genre, String name, String description, String image, double score, long userId, String questRoomName) {
+       super(questId);
         this.genre = genre;
         this.name = name;
         this.description = description;
@@ -44,12 +40,14 @@ public class Quest implements Serializable {
         return name;
     }
 
-    public int getQuestId() {
-        return questId;
+    @Override
+    public long getId() {
+        return super.getId();
     }
 
-    public void setQuestId(int questId) {
-        this.questId = questId;
+    @Override
+    public void setId(long id) {
+        super.setId(id);
     }
 
     public void setGenre(String genre) {
@@ -72,19 +70,19 @@ public class Quest implements Serializable {
         this.image = image;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

@@ -10,11 +10,11 @@ import java.util.List;
 
 
 public interface UserService {
-    int register(User user) throws ServiceException, ValidationException, UserAlreadyExistException;
+    long register(User user) throws ServiceException, ValidationException, UserAlreadyExistException;
     User fetchUser(User user) throws ServiceException, ValidationException;
-    void makeUserActive(int userId) throws ServiceException;
-    void frozeUser(int userId) throws ServiceException;
-    List<User> fetchUsersByStatus(Status status, int currentPage);
+    void makeUserActive(long userId) throws ServiceException;
+    void frozeUser(long userId) throws ServiceException;
+    List<User> fetchUsersByStatus(Status status, int currentPage) throws ServiceException;
     int fetchUserQuantityByStatus(Status status) throws ServiceException;
 
 }

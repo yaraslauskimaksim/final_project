@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/taglib/paginator.tld" prefix="paginator" %>
 <%@ include file = "part/header.jsp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -9,9 +9,12 @@
 <c:forEach items="${allQuests}" var="quest">
    <div class="col-md-4">
       <div class="card mb-4 box-shadow">
-         <c:if test="${not empty quest.image}">
-            <img class="card-img-top" src="${quest.image}" alt="" width="200" height="200">
-         </c:if>
+          <c:if test="${not empty quest.image}">
+                    <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.id}"><img class="card-img-top" src="uploadFiles/${quest.image}" alt="" width="200" height="200"></a>
+                 </c:if>
+                  <c:if test="${empty quest.image}">
+                    <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.id}"><img class="card-img-top" src="static/img/1.jpg" alt="" width="200" height="200"></a>
+                    </c:if>
          <div class="card-body">
             <p class="card-text">
             <h5>
@@ -21,13 +24,13 @@
             </h5>
             </p>
             <p class="card-text">
-            <h5>
-               <c:out value="${quest.description}" />
-            </h5>
+            <h6>
+               by <c:out value="${quest.questRoomName}" />
+            </h6>
             </p>
             <div class="d-flex justify-content-between align-items-center">
                <div class="btn-group">
-                  <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.questId}">View</a>
+                  <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.questId}">More..</a>
                   </div
                   <small class="text-muted"><c:out value="${quest.score}" /></small>
                </div>
@@ -37,34 +40,8 @@
 </c:forEach>
 </div>
 <ul class="pagination justify-content-center">
-     <c:if test="${currentPage != 1}">
-        <li class="page-item">
-           <a class="page-link" href="frontController?command=showQuestByRating&page=${currentPage - 1}" aria-label="Previous">
-           <span aria-hidden="true">&laquo;</span>
-           <span class="sr-only">Previous</span>
-           </a>
-        </li>
-     </c:if>
-     <li class="page-item">
-        <c:forEach begin="1" end="${numberOfPages}" var="i">
-           <c:choose>
-            <c:when test="${page eq 1}">
-            </c:when>
-              <c:when test="${currentPage eq i}">
-                 <a class="page-link" href="frontController?command=showQuestByRating&page=${i}" > ${i}</a>
-              </c:when>
-           </c:choose>
-        </c:forEach>
-     </li>
-     <li class="page-item">
-        <c:if test="${currentPage lt numberOfPages}">
-           <a class="page-link" href="frontController?command=showQuestByRating&page=${currentPage + 1}" aria-label="Next">
-           <span aria-hidden="true">&raquo;</span>
-           <span class="sr-only">Next</span>
-           </a>
-        </c:if>
-     </li>
-  </ul>
+<paginator:display currentPage="${requestScope.currentPage}" numberOfPages="${requestScope.numberOfPages}" viewPageCount="1" url="frontController?command=quest&" />
+</ul>
   </div>
   </div>
   <%@ include file = "part/footer.jsp" %>

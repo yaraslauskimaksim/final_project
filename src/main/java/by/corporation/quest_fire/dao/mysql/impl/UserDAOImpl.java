@@ -1,7 +1,7 @@
 package by.corporation.quest_fire.dao.mysql.impl;
 
+import by.corporation.quest_fire.dao.AbstractDAO;
 import by.corporation.quest_fire.dao.exception.ConnectionPoolException;
-import by.corporation.quest_fire.dao.mysql.TransactionManager;
 import by.corporation.quest_fire.dao.mysql.UserDAO;
 import by.corporation.quest_fire.dao.exception.DaoException;
 import by.corporation.quest_fire.dao.pool.ConnectionPool;
@@ -20,7 +20,11 @@ import java.util.List;
 /**
  * This class is for retrieving data connected with user
  */
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends AbstractDAO implements UserDAO {
+
+    public UserDAOImpl(PooledConnection connection){
+        super(connection);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(UserDAOImpl.class);
 
@@ -30,25 +34,25 @@ public class UserDAOImpl implements UserDAO {
     private static final String SELECT_USER_ID = "SELECT usr_id from user where usr_email=?";
     private static final String GET_ALL_USERS_WITH_STATUS = "SELECT usr_id, usr_status, usr_firstname, usr_lastname, usr_email FROM user WHERE usr_status = ? LIMIT ? OFFSET ?";
     private static final String GET_USER_BY_STATUS_QUANTITY = "SELECT COUNT(*) FROM user WHERE usr_status = ?";
-    private static final String REJECT_COMMENT = "UPDATE comment SET com_status = 'rejected' WHERE com_user_id = ?";
-    private static final String APPROVE_COMMENT = "UPDATE comment SET com_status = 'approved' WHERE com_user_id = ?";
+
     private static final String UPDATE_COMMENT = "UPDATE comment SET com_quest_id = ?, com_user_id = ?, com_description = ?, com_status = ?, com_date = ? WHERE com_id = ?";
     private static final String UPDATE_USER = "UPDATE user SET usr_firstname = ?, usr_lastname = ?,usr_password = ?, usr_status = ? WHERE usr_id = ? ";
     private static final String SELECT_USER_BY_ID = "select  usr_id, usr_firstname, usr_lastname, usr_email, usr_password, usr_status from user where usr_id = ?";
 
+
+
     /**
-     * The method returns the {@link User} from db.
-     *
-     * @throws DaoException the dao exception
+     * The method returns the {@link User} from db according to
+     * @param email and
+     * @param password
+     * @throws DaoException if {@link SQLException} or {@link ConnectionPool} exception happens.
      */
 
-    public User fetchUser(String email, String password) throws DaoException {
-        PooledConnection connection = null;
+    public User fetchUserByEmailPassword(String email, String password) throws DaoException {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-
         try {
-            connection = ConnectionPool.getInstance().getConnection();
+            connection = getConnection();
             statement = connection.prepareStatement(SELECT_LOGGIN_USER);
             statement.setString(1, email);
             statement.setString(2, password);
@@ -59,7 +63,7 @@ public class UserDAOImpl implements UserDAO {
             }
             User user = formUser(resultSet);
             return user;
-        } catch (SQLException e) {
+        } catch (SQLException  e) {
             throw new DaoException("Exception occurs during retrieving a user who is trying to log in");
         } finally {
             try {
@@ -74,23 +78,22 @@ public class UserDAOImpl implements UserDAO {
     /**
      * The method returns the generated id for user from db.
      *
-     * @throws DaoException the dao exception
+     * @throws DaoException if {@link SQLException} or {@link ConnectionPool} exception happens.
      */
-    public int registerUser(User user) throws DaoException {
-        PooledConnection connection = null;
+    public long create(User user) throws DaoException {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        int userId = 0;
+        long userId = 0;
         try {
-            connection = ConnectionPool.getInstance().getConnection();
+            connection = getConnection();
             statement = connection.prepareStatement(CREATE_NEW_USER, Statement.RETURN_GENERATED_KEYS);
             formUser(user, statement);
             statement.executeUpdate();
             resultSet = statement.getGeneratedKeys();
             resultSet.next();
-            userId = resultSet.getInt(1);
+            userId = resultSet.getLong(1);
             return userId;
-        } catch (SQLException e) {
+        } catch (SQLException  e) {
             throw new DaoException("Exception occurs during user's registration", e);
         } finally {
             try {
@@ -102,12 +105,13 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+
     @Override
-    public int fetchUserId(User user) throws DaoException {
+    public long fetchUserId(User user) throws DaoException {
         PooledConnection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        int userId = 0;
+       long userId = 0;
         try {
             connection = ConnectionPool.getInstance().getConnection();
             statement = connection.prepareStatement(SELECT_USER_ID);
@@ -141,10 +145,8 @@ public class UserDAOImpl implements UserDAO {
             statement1.setString(2, user.getLastName());
             statement1.setString(3, user.getPassword());
             statement1.setString(4, String.valueOf(user.getStatus()).toLowerCase());
-            statement1.setInt(5, user.getId());
+            statement1.setLong(5, user.getId());
             statement1.executeUpdate();
-            statement2 = connection.prepareStatement(UPDATE_COMMENT);
-            formComment(statement2, comments);
         } catch (SQLException e) {
             throw new DaoException("Exception occurs during set status to frozen", e);
         } finally {
@@ -158,21 +160,10 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    private void formComment(PreparedStatement statement2, List<Comment> comments) throws SQLException {
-        for (Comment comment : comments) {
-            statement2.setInt(1, comment.getQuestId());
-            statement2.setInt(2, comment.getUserId());
-            statement2.setString(3, comment.getDescription());
-            statement2.setString(4, String.valueOf(comment.getStatus()).toLowerCase());
-            statement2.setTimestamp(5, comment.getTime());
-            statement2.setInt(6, comment.getCommentId());
-            statement2.addBatch();
-        }
-        statement2.executeBatch();
-    }
+
 
     @Override
-    public User fetchById(int userId) throws DaoException {
+    public User fetchById(long userId) throws DaoException {
         PooledConnection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -180,7 +171,7 @@ public class UserDAOImpl implements UserDAO {
         try {
             connection = ConnectionPool.getInstance().getConnection();
             statement = connection.prepareStatement(SELECT_USER_BY_ID);
-            statement.setInt(1, userId);
+            statement.setLong(1, userId);
             resultSet = statement.executeQuery();
             resultSet.next();
             if (resultSet.getRow() == 0) {
@@ -216,7 +207,7 @@ public class UserDAOImpl implements UserDAO {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
-                user.setId(resultSet.getInt(Constants.USER_ID));
+                user.setId(resultSet.getLong(Constants.USER_ID));
                 user.setStatus(Status.valueOf(resultSet.getString(Constants.STATUS).toUpperCase()));
                 user.setFirstName(resultSet.getString(Constants.USER_FIRSTNAME));
                 user.setLastName(resultSet.getString(Constants.USER_LASTNAME));
@@ -279,7 +270,7 @@ public class UserDAOImpl implements UserDAO {
 
 
     /**
-     * The method returns the {@link User} for fetchUser method.
+     * The method returns the {@link User} for fetchUserByEmailPassword method.
      *
      * @throws SQLException
      */

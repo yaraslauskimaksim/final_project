@@ -1,38 +1,41 @@
 package by.corporation.quest_fire.entity.dto;
 
+import by.corporation.quest_fire.entity.Entity;
 import by.corporation.quest_fire.entity.Quest;
 import by.corporation.quest_fire.entity.Status;
 import by.corporation.quest_fire.entity.User;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class BookingTO {
+public class BookingTO extends Entity implements Serializable {
 
-    private int bookingId;
     private int numberOfGuests;
     private User user;
     private Quest quest;
     private Status status;
-    private Timestamp timestamp;
+    private Timestamp bookedDate;
 
     public BookingTO() {
     }
 
-    public BookingTO(int bookingId, Timestamp timestamp, int numberOfGuests, User user, Quest quest, Status status) {
-        this.bookingId = bookingId;
-        this.timestamp = timestamp;
+    public BookingTO(int id, Timestamp bookedDate, int numberOfGuests, User user, Quest quest, Status status) {
+        super(id);
+        this.bookedDate = bookedDate;
         this.numberOfGuests = numberOfGuests;
         this.user = user;
         this.quest = quest;
         this.status = status;
     }
 
-    public int getBookingId() {
-        return bookingId;
+    @Override
+    public long getId() {
+        return super.getId();
     }
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
+    @Override
+    public void setId(long id) {
+        super.setId(id);
     }
 
     public User getUser() {
@@ -67,11 +70,11 @@ public class BookingTO {
         this.status = status;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setBookedDate(Timestamp bookedDate) {
+        this.bookedDate = bookedDate;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getBookedDate() {
+        return bookedDate;
     }
 }

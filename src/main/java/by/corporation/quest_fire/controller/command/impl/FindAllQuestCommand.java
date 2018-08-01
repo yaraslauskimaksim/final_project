@@ -23,12 +23,19 @@ import static by.corporation.quest_fire.controller.command.CommandResult.Routing
  */
 public class FindAllQuestCommand implements Command {
 
+    private QuestService questService;
+
+    public FindAllQuestCommand(QuestService questService) {
+        this.questService = ServiceFactory.getInstance().getQuestService();
+    }
+
     private static final Logger LOGGER = LogManager.getLogger(FindAllQuestCommand.class);
 
     /**
      * This command returns the {@link CommandResult}.
-     * If there are quests, user is redirected to page where they are present
-     * If not, there is a message that there aren't any quests
+     * If there are quests, user is redirected to page where they are present.
+     * If not, there is a message that there aren't any quests.
+     * In case of {@link ServiceException} user is redirected to 500 error page.
      */
     @Override
     public CommandResult execute(RequestContent requestContent) {
@@ -36,7 +43,6 @@ public class FindAllQuestCommand implements Command {
         int page = FrontControllerUtil.getCurrentPage(requestContent);
         List<Quest> quest = null;
         try {
-            QuestService questService = ServiceFactory.getInstance().getQuestService();
             quest = questService.fetchAllQuests(page);
             if (!quest.isEmpty()) {
                 int numberOfPages = questService.fetchNumberOfPages();

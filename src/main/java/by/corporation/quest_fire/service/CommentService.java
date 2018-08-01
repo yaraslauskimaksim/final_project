@@ -11,7 +11,7 @@ import java.util.List;
 public interface CommentService {
     int saveComment(Comment comment) throws ServiceException, ValidationException;
     List<CommentTO> fetchAllComments(int currentPage) throws ServiceException;
-    List<CommentTO> fetchAllCommentsByQuestId(int questId) throws ServiceException;
+    List<CommentTO> fetchAllCommentsByQuestId(long questId) throws ServiceException;
     int fetchNumberOfPages() throws ServiceException;
     void approveComment(int commentId) throws ServiceException;
     void rejectComment(int commentId) throws ServiceException;

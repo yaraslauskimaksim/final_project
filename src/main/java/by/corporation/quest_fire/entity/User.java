@@ -2,10 +2,9 @@ package by.corporation.quest_fire.entity;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class User extends Entity implements Serializable {
 
     private static final long serialVersionUID = 5103603126812784493L;
-    private int id;
     private String email;
     private String password;
     private String firstName;
@@ -16,18 +15,14 @@ public class User implements Serializable {
 
     public User(){}
 
-    public User(int id){
-        this.id = id;
-    }
 
-
-    public User(String firstName, String lastName, String email, String password, Role role, int id, Status status){
+    public User(String firstName, String lastName, String email, String password, Role role, long id, Status status){
+        super(id);
         this.firstName=firstName;
         this.lastName=lastName;
         this.email=email;
         this.password=password;
         this.role=role;
-        this.id=id;
         this.status=status;
     }
 
@@ -71,12 +66,14 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public long getId() {
+        return super.getId();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public void setId(long id) {
+        super.setId(id);
     }
 
     public void setStatus(Status status) {

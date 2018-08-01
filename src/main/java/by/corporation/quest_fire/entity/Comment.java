@@ -3,7 +3,7 @@ package by.corporation.quest_fire.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Comment implements Serializable {
+public class Comment extends Entity implements Serializable {
 
     private static final long serialVersionUID = -5105680222574964445L;
     private int commentId;

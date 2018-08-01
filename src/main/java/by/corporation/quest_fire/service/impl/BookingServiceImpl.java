@@ -28,7 +28,7 @@ public class BookingServiceImpl implements BookingService {
     public int saveBookingDetails(Booking booking) throws ServiceException {
         int bookingId = 0;
         try {
-            bookingId = bookingDAO.saveBookingDetails(booking);
+            bookingId = bookingDAO.create(booking);
         } catch (DaoException e) {
             throw new ServiceException("Exception during saving booking details", e);
         }
@@ -44,27 +44,34 @@ public class BookingServiceImpl implements BookingService {
      */
     @Override
     public List<BookingTO> fetchAllUserBooking(String questRoomName, int currentPage) throws ServiceException {
-        List<BookingTO> bookingList = new ArrayList<>();
+        List<BookingTO> filteredBookingList = new ArrayList<>();
+        List<BookingTO> bookingList;
         try {
-            bookingList = bookingDAO.fetchUserBooking(questRoomName, currentPage, Constants.ITEMS_PER_PAGE);
+            bookingList = bookingDAO.fetchUserBookingByQuestRoom(questRoomName, currentPage, Constants.ITEMS_PER_PAGE);
+            for (BookingTO booking: bookingList){
+                if(booking.getQuest().getQuestRoomName().equalsIgnoreCase(questRoomName)){
+                    filteredBookingList.add(booking);
+                }
+            }
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during retrieving users' booking for quest owner", e);
         }
-        return bookingList;
+        return filteredBookingList;
     }
 
+
     @Override
-    public List<BookingTO> findSingleUserBooking(int userId) throws ServiceException {
+    public List<BookingTO> findSingleUserBooking(long userId) throws ServiceException {
         List<BookingTO> bookings = null;
         List<BookingTO> filteredBooking = new ArrayList<>();
         try {
             bookings = bookingDAO.fetchSingleUserBookingDetails(userId);
             for (BookingTO bookingTO: bookings){
-                if(bookingTO.getTimestamp() == null){
+                if(bookingTO.getBookedDate() == null){
                     continue;
                 }
                 long time = System.currentTimeMillis();
-                if (bookingTO.getTimestamp().getTime() >= time) {
+                if (bookingTO.getBookedDate().getTime() >= time) {
                     filteredBooking.add(bookingTO);
                 }
             }
@@ -74,13 +81,13 @@ public class BookingServiceImpl implements BookingService {
         return filteredBooking;
     }
 
-
-    public void approveStatus(int bookingId) throws ServiceException {
-        Status status;
+    @Override
+    public void approveStatus(long bookingId) throws ServiceException {
         try {
-            status = bookingDAO.getStatus(bookingId);
-            if (status.equals(Status.PENDING)) {
-                bookingDAO.approveBooking(bookingId);
+            Booking booking = bookingDAO.fetchBooking(bookingId);
+            if (booking.getStatus().equals(Status.PENDING)) {
+                booking.setStatus(Status.APPROVED);
+                bookingDAO.update(booking);
             }
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during setting status on service layer", e);
@@ -89,12 +96,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void rejectStatus(int bookingId) throws ServiceException {
-        Status status;
+    public void rejectStatus(long bookingId) throws ServiceException {
         try {
-            status = bookingDAO.getStatus(bookingId);
-            if (status.equals(Status.PENDING)) {
-                bookingDAO.rejectBooking(bookingId);
+            Booking booking = bookingDAO.fetchBooking(bookingId);
+            if (booking.getStatus().equals(Status.PENDING)) {
+                booking.setStatus(Status.REJECTED);
+                bookingDAO.update(booking);
             }
         } catch (DaoException e) {
             throw new ServiceException("Exception occurs during setting status on service layer", e);
@@ -123,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
      * @param questId is for what quest.
      * @throws ServiceException the service exception
      */
-    private List<Timestamp> fetchBookedDate(int questId) throws ServiceException {
+    private List<Timestamp> fetchBookedDate(long questId) throws ServiceException {
         List<Timestamp> bookedDate = new ArrayList<>();
         try {
             bookedDate = bookingDAO.fetchBookedDate(questId);
@@ -141,7 +148,7 @@ public class BookingServiceImpl implements BookingService {
      * @throws ServiceException the service exception if date is null
      */
     @Override
-    public List<Timestamp> fetchFilteredBookedDateByCurrentTime(int questId) throws ServiceException {
+    public List<Timestamp> fetchFilteredBookedDateByCurrentTime(long questId) throws ServiceException {
         List<Timestamp> bookedDate = fetchBookedDate(questId);
         List<Timestamp> filteredDate = new ArrayList<>();
         for (Timestamp date : bookedDate) {

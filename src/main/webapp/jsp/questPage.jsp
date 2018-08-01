@@ -11,8 +11,11 @@
    <div class="col-md-4">
       <div class="card mb-4 box-shadow">
          <c:if test="${not empty quest.image}">
-            <img class="card-img-top" src="uploadFiles/${quest.image}" alt="" width="200" height="200">
+            <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.id}"><img class="card-img-top" src="uploadFiles/${quest.image}" alt="" width="200" height="200"></a>
          </c:if>
+          <c:if test="${empty quest.image}">
+            <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.id}"><img class="card-img-top" src="static/img/1.jpg" alt="" width="200" height="200"></a>
+            </c:if>
          <div class="card-body">
             <p class="card-text">
             <h5>
@@ -22,13 +25,13 @@
             </h5>
             </p>
             <p class="card-text">
-            <h5>
-               <c:out value="${quest.description}" />
-            </h5>
+            <h6>
+              by  <c:out value="${quest.questRoomName}" />
+            </h6>
             </p>
             <div class="d-flex justify-content-between align-items-center">
                <div class="btn-group">
-                  <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.questId}">View</a>
+                  <a class="btn btn-dark" href="frontController?command=singleQuest&questId=${quest.id}">More...</a>
                   </div
                   <small class="text-muted"><i class="far fa-smile">  <c:out value="${quest.score}"/></i></small>
                </div>
